@@ -5,7 +5,6 @@ export const ROOM_MAX_PLAYERS = 8
 export const ROOM_ROUND_OPTIONS = [3, 5, 7, 10] as const
 export const ROOM_TIMER_OPTIONS = [20, 30, 45, 60] as const
 export const ROOM_CODE_LENGTH = 4
-export const POLL_MS = 4000
 
 export interface RoomSettings {
   /** Empty = all standard categories (the mix). May include the 18+ category. */
@@ -24,7 +23,7 @@ export interface RoomSettings {
 export type RoomPhase =
   'lobby' | 'turn' | 'input' | 'reveal' | 'replace' | 'summary' | 'final'
 
-// ───────────── Server-side (stored) state ─────────────
+// ───────────── Host-side state (kept in the host's browser) ─────────────
 
 export interface RoomPlayer {
   id: string
@@ -157,7 +156,7 @@ export interface PublicRoom {
   currentPlayerId: string | null
   deadline: number | null
   phaseUntil: number | null
-  /** Server clock, so clients can correct their countdowns. */
+  /** Host clock, so guests can correct their countdowns. */
   now: number
   rounds: PublicRound[]
   lastTurn: PublicTurn | null
@@ -192,4 +191,6 @@ export interface Session {
   code: string
   playerId: string
   token: string
+  /** This phone created the room and runs it (PeerJS host). */
+  host?: boolean
 }

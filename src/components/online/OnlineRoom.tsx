@@ -15,16 +15,33 @@ interface Props {
 }
 
 export function OnlineRoom({ session, onLost, onExit }: Props) {
-  const { room, error, fatal, act, serverNow } = useRoom(session)
+  const { room, error, fatal, act, serverNow, link } = useRoom(session)
   const [leaving, setLeaving] = useState(false)
   const removed = !!room && !room.players.some((p) => p.id === session.playerId)
+  const hosting = !!session.host
+  const others = (room?.players.length ?? 1) > 1
 
   useEffect(() => {
     if (removed) clearSession(session.code)
   }, [removed, session.code])
 
+  // The room lives in the host's browser: warn before closing the tab.
+  useEffect(() => {
+    if (!hosting || !others) return
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [hosting, others])
+
   const leave = async () => {
-    if (!confirm('Napustiti sobu? Svoje mjesto za stolom gubiš.')) return
+    if (
+      !confirm(
+        hosting
+          ? 'Zatvoriti sobu? Ti si domaćin, pa igra završava za sve.'
+          : 'Napustiti sobu? Svoje mjesto za stolom gubiš.',
+      )
+    )
+      return
     setLeaving(true)
     try {
       await act('leave')
@@ -40,6 +57,7 @@ export function OnlineRoom({ session, onLost, onExit }: Props) {
       <Notice title="Soba nije dostupna" text={fatal}>
         <button
           onClick={() => {
+            link.close()
             clearSession(session.code)
             onExit()
           }}
@@ -86,6 +104,15 @@ export function OnlineRoom({ session, onLost, onExit }: Props) {
           className="mb-3 rounded-xl bg-rose-500/15 px-3 py-2 text-center text-sm text-rose-200 ring-1 ring-rose-500/30"
         >
           {error} Pokušavam ponovno…
+        </p>
+      )}
+      {hosting && room.phase === 'lobby' && (
+        <p
+          role="note"
+          className="mb-3 text-center text-xs text-muted-foreground"
+        >
+          Ti si domaćin: soba radi na ovom mobitelu, zato drži igru otvorenu do
+          kraja partije.
         </p>
       )}
       {room.phase === 'lobby' ? (
