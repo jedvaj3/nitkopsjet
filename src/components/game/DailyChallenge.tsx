@@ -1,188 +1,187 @@
-import { useEffect, useState } from 'react'
-import { Calendar, Check, Crown, Send } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { STANDARD_CATEGORIES } from '@/game/questions'
-import { q } from '@/game/q'
-import { judgeOffline } from '@/game/meaning'
-import { sfx, unlockAudio } from '@/game/sound'
-import type { Question } from '@/game/types'
+import { useEffect, useState } from "react";
+import { Calendar, Check, Crown, Send } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { STANDARD_CATEGORIES } from "@/game/questions";
+import { q } from "@/game/q";
+import { judgeOffline } from "@/game/meaning";
+import { sfx, unlockAudio } from "@/game/sound";
+import type { Question } from "@/game/types";
 
 const DAILY_SHEET_URL =
-      ['https:/', 'script.google.com', 'macros', 's'].join('/') + '/' +
-  'AKfycbyvdSlygi231wbW34mFxxxBLnQoG1rrVgo0iyRpoE8FBvhXTV2LtVb93AI8nGvtBDLj/exec'
-
-
+  ["https:/", "script.google.com", "macros", "s"].join("/") +
+  "/" +
+  "AKfycbyvdSlygi231wbW34mFxxxBLnQoG1rrVgo0iyRpoE8FBvhXTV2LtVb93AI8nGvtBDLj/exec";
 
 const DAILY_POOL: Question[] = [
-  q('daily-1', 'geografija', 'Države koje graniče s Brazilom', [
-    ['Argentina', 86],
-    ['Kolumbija', 68, 'Colombia'],
-    ['Peru', 64],
-    ['Venezuela', 58],
-    ['Bolivija', 52, 'Bolivia'],
-    ['Paragvaj', 48, 'Paraguay'],
-    ['Urugvaj', 45, 'Uruguay'],
-    ['Gvajana', 14, 'Guyana'],
-    ['Surinam', 6, 'Suriname'],
-    ['Francuska Gvajana', 0, 'Francuska'],
+  q("daily-1", "geografija", "Države koje graniče s Brazilom", [
+    ["Argentina", 86],
+    ["Kolumbija", 68, "Colombia"],
+    ["Peru", 64],
+    ["Venezuela", 58],
+    ["Bolivija", 52, "Bolivia"],
+    ["Paragvaj", 48, "Paraguay"],
+    ["Urugvaj", 45, "Uruguay"],
+    ["Gvajana", 14, "Guyana"],
+    ["Surinam", 6, "Suriname"],
+    ["Francuska Gvajana", 0, "Francuska"],
   ]),
-  q('daily-2', 'sport', 'Hrvatski nogometaši koji su igrali za Real Madrid', [
-    ['Luka Modrić', 96, 'Modric'],
-    ['Mateo Kovačić', 78, 'Kovacic'],
-    ['Davor Šuker', 74, 'Suker'],
-    ['Robert Prosinečki', 52, 'Prosinecki'],
-    ['Robert Jarni', 34, 'Jarni'],
-    ['Igor Jovićević', 0, 'Jovicevic'],
+  q("daily-2", "sport", "Hrvatski nogometaši koji su igrali za Real Madrid", [
+    ["Luka Modrić", 96, "Modric"],
+    ["Mateo Kovačić", 78, "Kovacic"],
+    ["Davor Šuker", 74, "Suker"],
+    ["Robert Prosinečki", 52, "Prosinecki"],
+    ["Robert Jarni", 34, "Jarni"],
+    ["Igor Jovićević", 0, "Jovicevic"],
   ]),
-  q('daily-3', 'film', 'Filmovi Quentina Tarantina (kao redatelja)', [
-    ['Pakleni šund', 90, 'Pulp Fiction'],
-    ['Nemilosrdni gadovi', 78, 'Inglourious Basterds'],
-    ['Odbjegli Django', 74, 'Django Unchained'],
-    ['Kill Bill', 70, 'Kill Bill 1', 'Kill Bill 2'],
-    ['Bilo jednom u Hollywoodu', 56, 'Once Upon a Time in Hollywood'],
-    ['Psi iz rezervoara', 44, 'Reservoir Dogs'],
-    ['Mrska osmorka', 28, 'The Hateful Eight'],
-    ['Jackie Brown', 8],
-    ['Otporan na smrt', 0, 'Death Proof'],
+  q("daily-3", "film", "Filmovi Quentina Tarantina (kao redatelja)", [
+    ["Pakleni šund", 90, "Pulp Fiction"],
+    ["Nemilosrdni gadovi", 78, "Inglourious Basterds"],
+    ["Odbjegli Django", 74, "Django Unchained"],
+    ["Kill Bill", 70, "Kill Bill 1", "Kill Bill 2"],
+    ["Bilo jednom u Hollywoodu", 56, "Once Upon a Time in Hollywood"],
+    ["Psi iz rezervoara", 44, "Reservoir Dogs"],
+    ["Mrska osmorka", 28, "The Hateful Eight"],
+    ["Jackie Brown", 8],
+    ["Otporan na smrt", 0, "Death Proof"],
   ]),
-  q('daily-4', 'geografija', 'Otoci u Jadranskom moru veći od 50 km²', [
-    ['Krk', 92],
-    ['Cres', 88],
-    ['Brač', 86, 'Brac'],
-    ['Hvar', 85],
-    ['Pag', 80],
-    ['Korčula', 76, 'Korcula'],
-    ['Dugi otok', 58],
-    ['Mljet', 52],
-    ['Vis', 48],
-    ['Rab', 46],
-    ['Lošinj', 40, 'Losinj'],
-    ['Pašman', 24, 'Pasman'],
-    ['Šolta', 18, 'Solta'],
-    ['Ugljan', 14],
-    ['Lastovo', 6],
-    ['Kornat', 0],
+  q("daily-4", "geografija", "Otoci u Jadranskom moru veći od 50 km²", [
+    ["Krk", 92],
+    ["Cres", 88],
+    ["Brač", 86, "Brac"],
+    ["Hvar", 85],
+    ["Pag", 80],
+    ["Korčula", 76, "Korcula"],
+    ["Dugi otok", 58],
+    ["Mljet", 52],
+    ["Vis", 48],
+    ["Rab", 46],
+    ["Lošinj", 40, "Losinj"],
+    ["Pašman", 24, "Pasman"],
+    ["Šolta", 18, "Solta"],
+    ["Ugljan", 14],
+    ["Lastovo", 6],
+    ["Kornat", 0],
   ]),
-  q('daily-5', 'glazba', 'Pjesme Dine Dvornika', [
-    ['Afrika', 92],
-    ['Ti si mi u mislima', 86],
-    ['Zašto praviš slona od mene', 78, 'Zasto pravis slona od mene'],
-    ['Hipnotiziran', 70],
-    ['Jače manijače', 64, 'Jace manijace'],
-    ['Ella E', 50],
-    ['Ništa kontra Splita', 46, 'Nista kontra Splita'],
-    ['Ljubav se zove imenom tvojim', 32],
-    ['Tebi pripadam', 14],
-    ['Nadahnuti', 4],
-    ['Pelin i med', 0],
+  q("daily-5", "glazba", "Pjesme Dine Dvornika", [
+    ["Afrika", 92],
+    ["Ti si mi u mislima", 86],
+    ["Zašto praviš slona od mene", 78, "Zasto pravis slona od mene"],
+    ["Hipnotiziran", 70],
+    ["Jače manijače", 64, "Jace manijace"],
+    ["Ella E", 50],
+    ["Ništa kontra Splita", 46, "Nista kontra Splita"],
+    ["Ljubav se zove imenom tvojim", 32],
+    ["Tebi pripadam", 14],
+    ["Nadahnuti", 4],
+    ["Pelin i med", 0],
   ]),
-  q('daily-6', 'znanost', 'Kemijski elementi s jednoslovnim simbolom', [
-    ['Kisik', 92, 'O'],
-    ['Vodik', 90, 'H'],
-    ['Ugljik', 86, 'C'],
-    ['Dušik', 78, 'Dusik', 'N'],
-    ['Sumpor', 56, 'S'],
-    ['Fosfor', 48, 'P'],
-    ['Kalij', 44, 'K'],
-    ['Jod', 36, 'I'],
-    ['Fluor', 30, 'F'],
-    ['Uranij', 24, 'Uran', 'U'],
-    ['Bor', 12, 'B'],
-    ['Volfram', 4, 'W'],
-    ['Vanadij', 2, 'V'],
-    ['Itrij', 0, 'Y'],
+  q("daily-6", "znanost", "Kemijski elementi s jednoslovnim simbolom", [
+    ["Kisik", 92, "O"],
+    ["Vodik", 90, "H"],
+    ["Ugljik", 86, "C"],
+    ["Dušik", 78, "Dusik", "N"],
+    ["Sumpor", 56, "S"],
+    ["Fosfor", 48, "P"],
+    ["Kalij", 44, "K"],
+    ["Jod", 36, "I"],
+    ["Fluor", 30, "F"],
+    ["Uranij", 24, "Uran", "U"],
+    ["Bor", 12, "B"],
+    ["Volfram", 4, "W"],
+    ["Vanadij", 2, "V"],
+    ["Itrij", 0, "Y"],
   ]),
-  q('daily-7', 'hrvatska', 'Hrvatski nacionalni parkovi', [
-    ['Plitvička jezera', 97, 'Plitvice'],
-    ['Krka', 92],
-    ['Kornati', 84],
-    ['Brijuni', 78],
-    ['Mljet', 68],
-    ['Paklenica', 62],
-    ['Risnjak', 44],
-    ['Sjeverni Velebit', 0, 'Velebit'],
+  q("daily-7", "hrvatska", "Hrvatski nacionalni parkovi", [
+    ["Plitvička jezera", 97, "Plitvice"],
+    ["Krka", 92],
+    ["Kornati", 84],
+    ["Brijuni", 78],
+    ["Mljet", 68],
+    ["Paklenica", 62],
+    ["Risnjak", 44],
+    ["Sjeverni Velebit", 0, "Velebit"],
   ]),
-  q('daily-8', 'opca', 'Šahovske figure (pojedinačni nazivi)', [
-    ['Kralj', 96],
-    ['Kraljica', 94, 'Dama'],
-    ['Top', 86, 'Kula'],
-    ['Lovac', 82, 'Laufer'],
-    ['Skakač', 78, 'Konj', 'Skakac'],
-    ['Pješak', 0, 'Pion', 'Pjesak'],
+  q("daily-8", "opca", "Šahovske figure (pojedinačni nazivi)", [
+    ["Kralj", 96],
+    ["Kraljica", 94, "Dama"],
+    ["Top", 86, "Kula"],
+    ["Lovac", 82, "Laufer"],
+    ["Skakač", 78, "Konj", "Skakac"],
+    ["Pješak", 0, "Pion", "Pjesak"],
   ]),
-]
+];
 
 interface Attempt {
-  label: string
-  points: number
-  answerIndex: number | null
+  label: string;
+  points: number;
+  answerIndex: number | null;
 }
 
 interface SavedState {
-  date: string
-  attempts: Attempt[]
-  submitted: boolean
+  date: string;
+  attempts: Attempt[];
+  submitted: boolean;
 }
 
 interface Leader {
-  name: string
-  points: number
-  answer: string
+  name: string;
+  points: number;
+  answer: string;
 }
 
 function todayKey(): string {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Europe/Zagreb',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date())
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Zagreb",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 }
 
 function dailyQuestion(dateKey: string): Question {
-  let h = 2166136261
+  let h = 2166136261;
   for (let i = 0; i < dateKey.length; i++) {
-    h ^= dateKey.charCodeAt(i)
-    h = Math.imul(h, 16777619)
+    h ^= dateKey.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
-  return DAILY_POOL.at(Math.abs(h) % DAILY_POOL.length) ?? DAILY_POOL.at(0)!
+  return DAILY_POOL.at(Math.abs(h) % DAILY_POOL.length) ?? DAILY_POOL.at(0)!;
 }
 
 function deviceId(): string {
   try {
-    const k = 'nitkosjet_dev_id'
-    let id = localStorage.getItem(k)
+    const k = "nitkosjet_dev_id";
+    let id = localStorage.getItem(k);
     if (!id) {
-      id = `dev_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
-      localStorage.setItem(k, id)
+      id = `dev_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+      localStorage.setItem(k, id);
     }
-    return id
+    return id;
   } catch {
-    return 'dev_fallback'
+    return "dev_fallback";
   }
 }
 
 function loadState(dateKey: string): SavedState {
   try {
-    const raw = localStorage.getItem(`ns_daily_${dateKey}`)
+    const raw = localStorage.getItem(`ns_daily_${dateKey}`);
     if (raw) {
-      const parsed = JSON.parse(raw) as SavedState
-      if (parsed && parsed.date === dateKey) return parsed
+      const parsed = JSON.parse(raw) as SavedState;
+      if (parsed && parsed.date === dateKey) return parsed;
     }
     if (document.cookie.includes(`ns_daily_${dateKey}=1`)) {
-      return { date: dateKey, attempts: [], submitted: true }
+      return { date: dateKey, attempts: [], submitted: true };
     }
   } catch {
     // ignore
   }
-  return { date: dateKey, attempts: [], submitted: false }
+  return { date: dateKey, attempts: [], submitted: false };
 }
 
 function saveState(st: SavedState) {
   try {
-    localStorage.setItem(`ns_daily_${st.date}`, JSON.stringify(st))
+    localStorage.setItem(`ns_daily_${st.date}`, JSON.stringify(st));
     if (st.submitted) {
-      document.cookie = `ns_daily_${st.date}=1; max-age=172800; path=/; SameSite=Lax`
+      document.cookie = `ns_daily_${st.date}=1; max-age=172800; path=/; SameSite=Lax`;
     }
   } catch {
     // ignore
@@ -190,111 +189,111 @@ function saveState(st: SavedState) {
 }
 
 export function DailyChallenge() {
-  const [dateKey] = useState(() => todayKey())
-  const question = dailyQuestion(dateKey)
-  const cat = STANDARD_CATEGORIES.find((c) => c.id === question.category)
+  const [dateKey] = useState(() => todayKey());
+  const question = dailyQuestion(dateKey);
+  const cat = STANDARD_CATEGORIES.find((c) => c.id === question.category);
 
-  const [state, setState] = useState<SavedState>(() => loadState(dateKey))
-  const [guess, setGuess] = useState('')
-  const [err, setErr] = useState<string | null>(null)
-  const [name, setName] = useState('')
-  const [sending, setSending] = useState(false)
-  const [leaders, setLeaders] = useState<Leader[]>([])
-  const [loading, setLoading] = useState(true)
+  const [state, setState] = useState<SavedState>(() => loadState(dateKey));
+  const [guess, setGuess] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [sending, setSending] = useState(false);
+  const [leaders, setLeaders] = useState<Leader[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const loadLeaders = () => {
-    setLoading(true)
     fetch(DAILY_SHEET_URL)
       .then((r) => r.json())
       .then((rows) => {
-        if (Array.isArray(rows)) setLeaders(rows)
+        if (Array.isArray(rows)) setLeaders(rows);
       })
       .catch(() => {})
-      .finally(() => setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    loadLeaders()
-  }, [])
+    loadLeaders();
+  }, []);
 
   const best =
     state.attempts.length > 0
-      ? [...state.attempts].sort((a, b) => a.points - b.points).at(0) ?? null
-      : null
+      ? ([...state.attempts].sort((a, b) => a.points - b.points).at(0) ?? null)
+      : null;
 
   const finished =
     state.submitted ||
     state.attempts.length >= 3 ||
-    (best !== null && best.points === 0)
+    (best !== null && best.points === 0);
 
   const onGuess = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (finished) return
-    const text = guess.trim()
-    if (!text) return
-    unlockAudio()
-    setErr(null)
+    e.preventDefault();
+    if (finished) return;
+    const text = guess.trim();
+    if (!text) return;
+    unlockAudio();
+    setErr(null);
 
     const used = state.attempts
       .map((a) => a.answerIndex)
-      .filter((i): i is number => i !== null)
+      .filter((i): i is number => i !== null);
 
-    const res = judgeOffline(question, text, { indexes: used, novels: [] })
+    const res = judgeOffline(question, text, { indexes: used, novels: [] });
     if (!res.ok) {
-      setErr(res.duplicate)
-      return
+      setErr(res.duplicate);
+      return;
     }
 
-    const v = res.verdict
+    const v = res.verdict;
     const label =
       v.answerIndex !== null
         ? (question.answers.at(v.answerIndex)?.text ?? text)
-        : text
+        : text;
 
-    sfx.click()
+    sfx.click();
     const next: SavedState = {
       ...state,
       attempts: [
         ...state.attempts,
         { label, points: v.points, answerIndex: v.answerIndex },
       ],
-    }
-    setState(next)
-    saveState(next)
-    setGuess('')
-  }
+    };
+    setState(next);
+    saveState(next);
+    setGuess("");
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!best || state.submitted || sending) return
-    const clean = name.trim()
-    if (!clean) return
-    setSending(true)
-    setErr(null)
+    e.preventDefault();
+    if (!best || state.submitted || sending) return;
+    const clean = name.trim();
+    if (!clean) return;
+    setSending(true);
+    setErr(null);
     try {
       const r = await fetch(DAILY_SHEET_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
           name: clean,
           points: best.points,
-          answer: best.points < 100 ? best.label : '—',
+          answer: best.points < 100 ? best.label : "—",
           deviceId: deviceId(),
         }),
-      })
-      const j = await r.json().catch(() => ({ ok: true }))
+      });
+      const j = await r.json().catch(() => ({ ok: true }));
       if (j && j.duplicate) {
-        setErr('S ovog uređaja ili pod tim imenom je danas već odigrano!')
+        setErr("S ovog uređaja ili pod tim imenom je danas već odigrano!");
       }
     } catch {
       // ignore network issue
     }
-    const next: SavedState = { ...state, submitted: true }
-    setState(next)
-    saveState(next)
-    setSending(false)
-    loadLeaders()
-  }
+    const next: SavedState = { ...state, submitted: true };
+    setState(next);
+    saveState(next);
+    setSending(false);
+    setLoading(true);
+    loadLeaders();
+  };
 
   return (
     <section className="panel gold-ring mb-6 rounded-3xl p-5 sm:p-6">
@@ -324,12 +323,12 @@ export function DailyChallenge() {
             <div
               key={i}
               className={cn(
-                'flex items-center justify-between rounded-2xl px-3.5 py-2.5 ring-1',
+                "flex items-center justify-between rounded-2xl px-3.5 py-2.5 ring-1",
                 a.points === 0
-                  ? 'bg-amber-300/15 ring-amber-300/50'
+                  ? "bg-amber-300/15 ring-amber-300/50"
                   : a.points < 100
-                    ? 'bg-cyan-400/10 ring-cyan-400/30'
-                    : 'bg-rose-500/10 ring-rose-500/30',
+                    ? "bg-cyan-400/10 ring-cyan-400/30"
+                    : "bg-rose-500/10 ring-rose-500/30",
               )}
             >
               <span className="min-w-0 truncate pr-2 text-sm font-bold">
@@ -337,5 +336,117 @@ export function DailyChallenge() {
               </span>
               <span
                 className={cn(
-                  'shrink-0 font-display text-sm font-black tabular-nums',
+                  "shrink-0 font-display text-sm font-black tabular-nums",
                   a.points === 0
+                    ? "text-gold"
+                    : a.points < 100
+                      ? "text-primary"
+                      : "text-destructive",
+                )}
+              >
+                {a.points === 0 ? "NitkoSjet!" : a.points}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!finished && (
+        <form onSubmit={onGuess} className="mt-4 space-y-2">
+          <label htmlFor="daily-guess" className="text-sm font-bold">
+            Tvoj odgovor ({state.attempts.length + 1}/3)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <input
+              id="daily-guess"
+              value={guess}
+              onChange={(e) => setGuess(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-foreground"
+              autoComplete="off"
+              required
+            />
+            <button
+              type="submit"
+              className="btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2 font-bold"
+            >
+              <Check className="size-4" aria-hidden="true" /> Potvrdi odgovor
+            </button>
+          </div>
+        </form>
+      )}
+
+      {finished && !state.submitted && best && (
+        <form onSubmit={onSubmit} className="mt-4 space-y-2">
+          <p className="text-sm font-bold">
+            Najbolji rezultat: {best.points} bodova
+          </p>
+          <label htmlFor="daily-name" className="text-sm font-bold">
+            Ime za ljestvicu
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <input
+              id="daily-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-foreground"
+              maxLength={30}
+              required
+              disabled={sending}
+            />
+            <button
+              type="submit"
+              disabled={sending}
+              className="btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2 font-bold disabled:opacity-50"
+            >
+              <Send className="size-4" aria-hidden="true" />
+              {sending ? "Slanje…" : "Pošalji rezultat"}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {state.submitted && (
+        <p className="mt-4 text-sm font-semibold">
+          Današnji izazov je završen. Vidimo se sutra!
+        </p>
+      )}
+      {err && (
+        <p role="alert" className="mt-3 text-sm text-destructive">
+          {err}
+        </p>
+      )}
+
+      <div className="mt-5 border-t border-border pt-4">
+        <h3 className="flex items-center gap-2 font-display text-sm font-bold">
+          <Crown className="size-4 text-gold" aria-hidden="true" /> Današnja
+          ljestvica
+        </h3>
+        {loading ? (
+          <p role="status" className="mt-3 text-sm text-muted-foreground">
+            Učitavanje…
+          </p>
+        ) : leaders.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            Još nema rezultata.
+          </p>
+        ) : (
+          <ol className="mt-3 space-y-2">
+            {leaders.map((leader, i) => (
+              <li
+                key={`${leader.name}-${i}`}
+                className="flex items-center justify-between gap-3 text-sm"
+              >
+                <span className="min-w-0 truncate">
+                  {i + 1}. {leader.name}
+                </span>
+                <span className="shrink-0 font-bold tabular-nums">
+                  {leader.points} bodova
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </section>
+  );
+}
