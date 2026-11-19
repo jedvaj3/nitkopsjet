@@ -114,7 +114,7 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
 
   // Reactions: show each one for ~2.5 s over the target's desk; pop sound for new ones.
   const flying = room.reactions.filter((r) => now - r.at < 2500)
-  const lastReaction = room.reactions.at(-1)?.id ?? 0
+  const lastReaction = Math.max(0, ...room.reactions.map((r) => r.id))
   const heardReaction = useRef(lastReaction)
   useEffect(() => {
     if (lastReaction > heardReaction.current) sfx.react()
@@ -704,6 +704,7 @@ function ReactionBar({
     if (cooldown) return
     setCooldown(true)
     setTimeout(() => setCooldown(false), 650)
+    sfx.react()
     try {
       await act('react', { emoji })
     } catch {

@@ -6,7 +6,7 @@ import {
   joinRoom,
   leaveRoom,
   nextRound,
-  react,
+  reactBatch,
   pendingJudgement,
   pendingLock,
   pendingReplace,
@@ -21,9 +21,8 @@ import {
   updateProfile,
   updateSettings,
 } from '@/online/logic'
-import { insertRoom, mutateRoom, readRoom } from '@/online/server'
-import { judgeAnswer } from '@/server/judge'
-import type { Judged, Verdict } from '@/game/meaning'
+import { insertRoom, mutateRoom } from '@/online/server'
+import { judgeOffline } from '@/game/meaning'
 
 const code = z
   .string()
@@ -63,7 +62,6 @@ const Action = z.discriminatedUnion('action', [
     ...auth,
     input: z.string().max(120),
   }),
-  z.object({ action: z.literal('react'), ...auth, emoji: z.string().max(8) }),
   z.object({ action: z.literal('next'), ...auth }),
   z.object({ action: z.literal('leave'), ...auth }),
   z.object({ action: z.literal('settings'), ...auth, settings }),
@@ -93,7 +91,11 @@ function fail(e: unknown) {
 export const Route = createFileRoute('/api/room')({
   server: {
     handlers: {
-      /** Poll: GET /api/room?code=XXXX with x-player-id / x-player-token headers. */
+      /**
+       * Poll: GET /api/room?code=XXXX with x-player-id / x-player-token headers.
+       * Reactions queued since the last poll ride along as `&r=😂,🔥`, so they
+       * cost no extra request or database write of their own.
+       */
       GET: async ({ request }) => {
         try {
           const url = new URL(request.url)
@@ -107,7 +109,14 @@ export const Route = createFileRoute('/api/room')({
             const me = s.players.find(
               (p) => p.id === playerId && p.token === token,
             )
-            if (me) changed = touch(s, me.id, now)
+            if (me) {
+              changed = touch(s, me.id, now)
+              const emojis = (url.searchParams.get('r') ?? '')
+                .split(',')
+                .filter(Boolean)
+              if (emojis.length && reactBatch(s, me.id, emojis, now))
+                changed = true
+            }
             changed = tick(s, now) || changed
             return { changed, result: null }
           })
@@ -164,40 +173,6 @@ export const Route = createFileRoute('/api/room')({
             )
           }
 
-          // Answers are judged (possibly by the AI, which takes a moment) before
-          // the room is locked for writing. The deadline is checked against the
-          // time the answer arrived, so judging time never counts as a timeout.
-          let judged: Judged | undefined
-          let lockVerdicts: (Verdict | null)[] = []
-          if (
-            a.action === 'answer' ||
-            a.action === 'replace' ||
-            a.action === 'lock'
-          ) {
-            const s = await readRoom(a.code)
-            requirePlayer(s, a.playerId, a.token)
-            tick(s, now)
-            if (a.action === 'answer') {
-              const { question, taken } = pendingJudgement(s, a.playerId)
-              judged = await judgeAnswer(question, a.input, taken)
-            } else if (a.action === 'replace') {
-              const { question, taken } = pendingReplace(s, a.playerId)
-              judged = await judgeAnswer(question, a.input, taken)
-            } else {
-              // All three answers are judged in parallel; cross-player
-              // duplicates are only resolved during the reveal.
-              const { question } = pendingLock(s, a.playerId)
-              const none = { indexes: [], novels: [] }
-              lockVerdicts = await Promise.all(
-                a.inputs.map(async (input) => {
-                  if (!input.trim()) return null
-                  const j = await judgeAnswer(question, input, none)
-                  return j.ok ? j.verdict : null
-                }),
-              )
-            }
-          }
-
           const { state } = await mutateRoom(a.code, (s) => {
             requirePlayer(s, a.playerId, a.token)
             touch(s, a.playerId, now)
@@ -206,18 +181,30 @@ export const Route = createFileRoute('/api/room')({
               case 'start':
                 startGame(s, a.playerId, now)
                 break
-              case 'answer':
-                submitAnswer(s, a.playerId, a.input, Date.now(), judged)
+              case 'answer': {
+                const { question, taken } = pendingJudgement(s, a.playerId)
+                const judged = judgeOffline(question, a.input, taken)
+                submitAnswer(s, a.playerId, a.input, now, judged)
                 break
-              case 'lock':
-                lockAnswers(s, a.playerId, a.inputs, lockVerdicts, Date.now())
+              }
+              case 'lock': {
+                // Cross-player duplicates are only resolved during the reveal.
+                const { question } = pendingLock(s, a.playerId)
+                const none = { indexes: [], novels: [] }
+                const verdicts = a.inputs.map((input) => {
+                  if (!input.trim()) return null
+                  const j = judgeOffline(question, input, none)
+                  return j.ok ? j.verdict : null
+                })
+                lockAnswers(s, a.playerId, a.inputs, verdicts, now)
                 break
-              case 'replace':
-                replaceAnswer(s, a.playerId, a.input, Date.now(), judged)
+              }
+              case 'replace': {
+                const { question, taken } = pendingReplace(s, a.playerId)
+                const judged = judgeOffline(question, a.input, taken)
+                replaceAnswer(s, a.playerId, a.input, now, judged)
                 break
-              case 'react':
-                react(s, a.playerId, a.emoji, now)
-                break
+              }
               case 'next':
                 nextRound(s, a.playerId, now)
                 break

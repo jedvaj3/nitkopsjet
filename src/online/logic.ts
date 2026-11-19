@@ -48,7 +48,7 @@ import {
 
 export const WRONG = 100
 /** A player not seen for this long counts as offline. */
-export const OFFLINE_MS = 12_000
+export const OFFLINE_MS = 16_000
 /** An offline player whose turn it is gets skipped after this long. */
 export const SKIP_OFFLINE_MS = 20_000
 export const SUMMARY_MS = 30_000
@@ -654,7 +654,10 @@ export function leaveRoom(state: RoomState, playerId: string, now: number) {
   }
 }
 
-const REACTION_TTL_MS = 6_000
+/** Long enough that every phone polling every 4 s receives each reaction. */
+const REACTION_TTL_MS = 10_000
+/** At most this many reactions per player are taken from one poll. */
+const REACTIONS_PER_SYNC = 4
 const REACTION_GAP_MS = 600
 
 /** Phases where someone is on turn and the others can heckle. */
@@ -694,6 +697,35 @@ export function react(
       at: now,
     },
   ]
+}
+
+/**
+ * Apply reactions a player queued since their last poll. They are spread out
+ * slightly in time (newest = now) so the per-player rate limit still holds.
+ * Invalid ones (turn just ended, rate-limited) are dropped silently.
+ */
+export function reactBatch(
+  state: RoomState,
+  playerId: string,
+  emojis: string[],
+  now: number,
+): boolean {
+  const list = emojis.slice(-REACTIONS_PER_SYNC)
+  let added = false
+  list.forEach((emoji, i) => {
+    try {
+      react(
+        state,
+        playerId,
+        emoji,
+        now - (list.length - 1 - i) * REACTION_GAP_MS,
+      )
+      added = true
+    } catch {
+      /* ignore */
+    }
+  })
+  return added
 }
 
 /** Mark a player as seen. Returns true when the state changed enough to store. */

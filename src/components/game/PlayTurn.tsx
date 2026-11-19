@@ -357,7 +357,9 @@ export function JudgeNote({ turn }: { turn: Turn }) {
         : isCorrect(turn)
           ? 'AI sudac: isto značenje kao odgovor iz ankete'
           : 'AI sudac: odgovor nema smisla za ovo pitanje'
-      : 'Sudac nije dostupan — ocijenjeno po ključnim riječima'
+      : isCorrect(turn)
+        ? 'Prepoznato po obliku riječi ili tipfeleru'
+        : 'Ovog odgovora nema na popisu'
   return (
     <p className="mt-3 flex items-start gap-1.5 text-sm text-muted-foreground">
       <Scale className="mt-0.5 size-4 shrink-0 text-neon" />

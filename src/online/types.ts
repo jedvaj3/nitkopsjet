@@ -5,7 +5,7 @@ export const ROOM_MAX_PLAYERS = 8
 export const ROOM_ROUND_OPTIONS = [3, 5, 7, 10] as const
 export const ROOM_TIMER_OPTIONS = [20, 30, 45, 60] as const
 export const ROOM_CODE_LENGTH = 4
-export const POLL_MS = 1600
+export const POLL_MS = 4000
 
 export interface RoomSettings {
   /** Empty = all standard categories (the mix). May include the 18+ category. */

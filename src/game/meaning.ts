@@ -193,9 +193,8 @@ export function verdictForIndex(
   return { answerIndex: idx, points: q.answers[idx].points, source, reason }
 }
 
-/** Offline fallback used when the AI judge fails. */
+/** Keyword/root check: only recognisable listed answers count, everything else is 100. */
 export function fallbackVerdict(q: Question, input: string): Verdict {
-  // Strict: without the AI judge only recognisable listed answers count.
   const idx = matchMeaning(q, input) ?? matchOverlap(q, input)
   if (idx !== null) return verdictForIndex(q, idx, 'rezerva')
   return { answerIndex: null, points: WRONG, source: 'rezerva' }
@@ -224,6 +223,19 @@ export function matchExact(q: Question, input: string): number | null {
     exactCache.set(q, map)
   }
   return map.get(normalize(input)) ?? null
+}
+
+/**
+ * The answer judge (no AI, no network): exact phrase or alias first, then
+ * typos, inflections and word roots. Used by local games in the browser and
+ * by online rooms on the server, so both play by exactly the same rules.
+ */
+export function judgeOffline(q: Question, input: string, taken: Taken): Judged {
+  const value = input.trim().slice(0, 80)
+  const idx = matchExact(q, value)
+  const v =
+    idx !== null ? verdictForIndex(q, idx, 'baza') : fallbackVerdict(q, value)
+  return checkDuplicate(q, v, taken)
 }
 
 /** Reject answers already used in this round (by index or by novel label). */

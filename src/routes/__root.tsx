@@ -9,7 +9,7 @@ import '../styles.css'
 const siteName =
   'NitkoSjet — kviz u kojem pobjeđuje odgovor kojeg se nitko nije sjetio'
 const siteDescription =
-  'NitkoSjet (nitkosjet.fun) — hrvatska kviz igra: pogodi točan odgovor kojeg se sjetilo najmanje od 100 ispitanika. Solo, dvoboj, timovi i online sobe s ekipom bez prijave. 18+ kategorija s više od 200 pitanja i AI sudac koji razumije smisao odgovora.'
+  'NitkoSjet (nitkosjet.fun) — hrvatska kviz igra: pogodi točan odgovor kojeg se sjetilo najmanje od 100 ispitanika. Solo, dvoboj, timovi i online sobe s ekipom bez prijave. 18+ kategorija s više od 200 pitanja i sudac koji prepoznaje tipfelere i padeže.'
 
 export const Route = createRootRoute({
   head: () => ({
