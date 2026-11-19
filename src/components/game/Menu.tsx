@@ -287,4 +287,3 @@ export function Menu({
                 active={mode === 'teams'}
                 onClick={() => setMode('teams')}
                 icon={<Users className="size-6" />}
-                title="Timovi 2 na 2"
