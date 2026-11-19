@@ -10,17 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiEvaluateAnswerRouteImport } from './routes/api.evaluate-answer'
 import { Route as ApiRoomRouteImport } from './routes/api.room'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiEvaluateAnswerRoute = ApiEvaluateAnswerRouteImport.update({
-  id: '/api/evaluate-answer',
-  path: '/api/evaluate-answer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRoomRoute = ApiRoomRouteImport.update({
@@ -31,31 +25,27 @@ const ApiRoomRoute = ApiRoomRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/evaluate-answer': typeof ApiEvaluateAnswerRoute
   '/api/room': typeof ApiRoomRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/evaluate-answer': typeof ApiEvaluateAnswerRoute
   '/api/room': typeof ApiRoomRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/evaluate-answer': typeof ApiEvaluateAnswerRoute
   '/api/room': typeof ApiRoomRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/evaluate-answer' | '/api/room'
+  fullPaths: '/' | '/api/room'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/evaluate-answer' | '/api/room'
-  id: '__root__' | '/' | '/api/evaluate-answer' | '/api/room'
+  to: '/' | '/api/room'
+  id: '__root__' | '/' | '/api/room'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiEvaluateAnswerRoute: typeof ApiEvaluateAnswerRoute
   ApiRoomRoute: typeof ApiRoomRoute
 }
 
@@ -66,13 +56,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/evaluate-answer': {
-      id: '/api/evaluate-answer'
-      path: '/api/evaluate-answer'
-      fullPath: '/api/evaluate-answer'
-      preLoaderRoute: typeof ApiEvaluateAnswerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/room': {
@@ -87,7 +70,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiEvaluateAnswerRoute: ApiEvaluateAnswerRoute,
   ApiRoomRoute: ApiRoomRoute,
 }
 export const routeTree = rootRouteImport

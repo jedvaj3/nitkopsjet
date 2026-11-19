@@ -15,7 +15,9 @@ export class ApiError extends Error {
 async function call<T>(
   init: RequestInit & { query?: string; session?: Session | null },
 ): Promise<T> {
-  const headers: Record<string, string> = { 'content-type': 'application/json' }
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+  }
   if (init.session) {
     headers['x-player-id'] = init.session.playerId
     headers['x-player-token'] = init.session.token
@@ -37,10 +39,13 @@ async function call<T>(
 }
 
 export const api = {
-  get: (session: Session) =>
+  /** Regular sync; `reactions` queued since the last poll are delivered with it. */
+  get: (session: Session, reactions: string[] = []) =>
     call<PublicRoom>({
       method: 'GET',
-      query: `?code=${encodeURIComponent(session.code)}`,
+      query: `?code=${encodeURIComponent(session.code)}${
+        reactions.length ? `&r=${encodeURIComponent(reactions.join(','))}` : ''
+      }`,
       session,
     }),
   peek: (code: string) =>

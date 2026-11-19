@@ -40,6 +40,28 @@ function levenshtein(a: string, b: string, max: number): number {
   return prev[b.length]
 }
 
+/** Typos allowed in one word: 2 from 7 letters, 1 from 4, none below. */
+const typosFor = (len: number) => (len >= 7 ? 2 : len >= 4 ? 1 : 0)
+
+/**
+ * Word-by-word typo distance between two phrases with the same number of
+ * words: every word must be within its own allowance (up to 2 per word).
+ * Returns Infinity when the phrases don't line up.
+ */
+function wordwiseDistance(a: string, b: string): number {
+  const wa = a.split(' ')
+  const wb = b.split(' ')
+  if (wa.length < 2 || wa.length !== wb.length) return Infinity
+  let total = 0
+  for (let i = 0; i < wa.length; i++) {
+    const max = typosFor(Math.min(wa[i].length, wb[i].length))
+    const d = levenshtein(wa[i], wb[i], max)
+    if (d > max) return Infinity
+    total += d
+  }
+  return total
+}
+
 type KeyIndex = { key: string; answer: number }[]
 const cache = new WeakMap<Question, KeyIndex>()
 const stemCache = new WeakMap<Question, { stem: string; answer: number }[]>()
@@ -127,15 +149,20 @@ export function matchAnswer(question: Question, input: string): number | null {
   const compactHit = keys.find((k) => compact(k.key) === c)
   if (compactHit) return compactHit.answer
 
-  // Fuzzy: allow small typos on longer words, but only if unambiguous.
+  // Fuzzy: allow small typos (up to 2 per word on longer words), but only
+  // if the input points to exactly one answer.
   let best = Infinity
   let bestAnswers = new Set<number>()
   for (const k of c.length < 4 ? [] : keys) {
     const kc = compact(k.key)
     if (kc.length < 4) continue
-    const allowed = kc.length >= 9 ? 2 : 1
-    const d = levenshtein(c, kc, allowed)
-    if (d > allowed) continue
+    const allowed = typosFor(kc.length)
+    const whole = levenshtein(c, kc, allowed)
+    const d = Math.min(
+      whole > allowed ? Infinity : whole,
+      wordwiseDistance(n, k.key),
+    )
+    if (d === Infinity) continue
     if (d < best) {
       best = d
       bestAnswers = new Set([k.answer])

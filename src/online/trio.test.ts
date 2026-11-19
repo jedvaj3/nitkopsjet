@@ -153,5 +153,21 @@ test('reactions: only at whoever is on turn, rate-limited, expire', async () => 
     ['😂', a.id],
     ['🔥', a.id],
   ])
-  expect(toPublic(state, t + 10_000).reactions).toEqual([])
+  expect(toPublic(state, t + 12_000).reactions).toEqual([])
+})
+
+test('reactions queued between polls are applied in one batch', async () => {
+  const { reactBatch } = await import('./logic')
+  const t = 30_000_000
+  const { state, player: a } = createRoom(
+    'REAB',
+    { name: 'Ana', avatar: 0 },
+    { rounds: 3, timer: 20, format: 'classic' },
+    t,
+  )
+  const b = joinRoom(state, { name: 'Ivo', avatar: 1 }, t)
+  startGame(state, a.id, t)
+  expect(reactBatch(state, b.id, ['😂', '🔥', 'xx'], t)).toBe(true)
+  expect(toPublic(state, t).reactions.map((r) => r.emoji)).toEqual(['😂', '🔥'])
+  expect(reactBatch(state, a.id, ['😂'], t)).toBe(false)
 })

@@ -535,11 +535,10 @@ function Home() {
               nazive ili samo prezime).
             </li>
             <li className="text-muted-foreground">
-              <b className="text-neon">⚖️ AI sudac:</b> ako odgovor nije
-              doslovno na popisu, strogi sudac provjerava smisao cijelog
-              odgovora. Isto značenje i pravi sleng vrijede kao odgovor iz
-              ankete, a stvaran odgovor kojeg nema u anketi dobiva 0–20 bodova.
-              Osobna imena, trolanje i besmislice dobivaju 100 bodova.
+              <b className="text-neon">⚖️ Sudac:</b> prepoznaje i druge padeže,
+              množinu i oblike riječi (npr. „kolač" = „pravljenje kolača").
+              Odgovor kojeg nema na popisu, osobna imena, trolanje i besmislice
+              dobivaju 100 bodova.
             </li>
             <li className="text-muted-foreground">
               Pitanja se ne ponavljaju dok ne odigraš cijelu kategoriju. Kad se
