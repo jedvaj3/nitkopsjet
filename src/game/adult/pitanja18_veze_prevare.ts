@@ -544,3 +544,7 @@ export default [
       '~telefon',
       '~ekran',
     ],
+    [
+      'Kašnjenje',
+      28,
+      'uvijek kasniš',
