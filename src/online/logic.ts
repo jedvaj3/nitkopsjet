@@ -1,6 +1,6 @@
 /**
  * Pure room rules for online games. Every function takes the stored state and
- * the current time and mutates the state in place; the server persists it.
+ * the current time and mutates the state in place; the host (`peer.ts`) keeps it.
  * Kept free of I/O so it can be unit-tested.
  */
 import { markPlayed, pickFromCategories } from '@/game/engine'
@@ -52,7 +52,7 @@ export const OFFLINE_MS = 16_000
 /** An offline player whose turn it is gets skipped after this long. */
 export const SKIP_OFFLINE_MS = 20_000
 export const SUMMARY_MS = 30_000
-/** Server-side slack after a displayed deadline (network + judging time). */
+/** Host-side slack after a displayed deadline (network + judging time). */
 const TURN_GRACE_MS = 3_000
 const LOCK_GRACE_MS = 10_000
 const REPLACE_GRACE_MS = 9_000
@@ -654,7 +654,7 @@ export function leaveRoom(state: RoomState, playerId: string, now: number) {
   }
 }
 
-/** Long enough that every phone polling every 4 s receives each reaction. */
+/** How long a reaction stays in the room view. */
 const REACTION_TTL_MS = 10_000
 /** At most this many reactions per player are taken from one poll. */
 const REACTIONS_PER_SYNC = 4

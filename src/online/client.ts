@@ -1,77 +1,21 @@
-import type { PublicRoom, RoomSettings, Session } from './types'
+import { createHostedRoom, joinGuest, peekRoom } from './peer'
+import type { RoomSettings, Session } from './types'
 
 const SESSION_KEY = 'nitkosjet:online:v1'
 const PROFILE_KEY = 'nitkosjet:online-profile:v1'
 
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
-    super(message)
-  }
-}
+export { LinkError as ApiError } from './peer'
 
-async function call<T>(
-  init: RequestInit & { query?: string; session?: Session | null },
-): Promise<T> {
-  const headers: Record<string, string> = {
-    'content-type': 'application/json',
-  }
-  if (init.session) {
-    headers['x-player-id'] = init.session.playerId
-    headers['x-player-token'] = init.session.token
-  }
-  let res: Response
-  try {
-    res = await fetch(`/api/room${init.query ?? ''}`, {
-      ...init,
-      headers,
-      cache: 'no-store',
-    })
-  } catch {
-    throw new ApiError('Nema veze s poslužiteljem. Provjeri internet.', 0)
-  }
-  const data = await res.json().catch(() => ({}))
-  if (!res.ok)
-    throw new ApiError(data.error ?? 'Nešto je pošlo po zlu.', res.status)
-  return data as T
-}
-
+/**
+ * Room actions. There is no server: the host's browser runs the room and the
+ * other phones talk to it directly over WebRTC (see `peer.ts`).
+ */
 export const api = {
-  /** Regular sync; `reactions` queued since the last poll are delivered with it. */
-  get: (session: Session, reactions: string[] = []) =>
-    call<PublicRoom>({
-      method: 'GET',
-      query: `?code=${encodeURIComponent(session.code)}${
-        reactions.length ? `&r=${encodeURIComponent(reactions.join(','))}` : ''
-      }`,
-      session,
-    }),
-  peek: (code: string) =>
-    call<PublicRoom>({
-      method: 'GET',
-      query: `?code=${encodeURIComponent(code)}`,
-    }),
+  peek: (code: string) => peekRoom(code),
   create: (name: string, avatar: number, settings: RoomSettings) =>
-    call<{ room: PublicRoom; session: Session }>({
-      method: 'POST',
-      body: JSON.stringify({ action: 'create', name, avatar, settings }),
-    }),
+    createHostedRoom(name, avatar, settings),
   join: (code: string, name: string, avatar: number) =>
-    call<{ room: PublicRoom; session: Session }>({
-      method: 'POST',
-      body: JSON.stringify({ action: 'join', code, name, avatar }),
-    }),
-  act: (
-    session: Session,
-    action: string,
-    extra: Record<string, unknown> = {},
-  ) =>
-    call<{ room: PublicRoom }>({
-      method: 'POST',
-      body: JSON.stringify({ action, ...session, ...extra }),
-    }),
+    joinGuest(code, name, avatar),
 }
 
 function readJson<T>(key: string): T | null {

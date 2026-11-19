@@ -3,6 +3,7 @@ import { ArrowLeft, DoorOpen, Loader2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { sfx, unlockAudio } from '@/game/sound'
 import { DEFAULT_FORMAT } from '@/game/trio'
+import { dropGuest } from '@/online/peer'
 import {
   ApiError,
   api,
@@ -57,7 +58,10 @@ export function OnlineEntry({ code, onCodeChange, onExit }: Props) {
   return (
     <EntryForm
       code={code}
-      onExit={onExit}
+      onExit={() => {
+        if (code) dropGuest(code)
+        onExit()
+      }}
       onEntered={(s) => {
         saveSession(s)
         setSession(s)
