@@ -15,16 +15,27 @@ export function q(
   answers: A[],
   opts: { hint?: string; surnames?: boolean } = {},
 ): Question {
+  const mapped: Answer[] = answers.map(([t, points, ...alts]): Answer => ({
+    text: t,
+    points,
+    alts,
+  }))
+
+  // Guarantee at least one 0-point "NitkoSjet" answer per question
+  if (mapped.length > 0 && !mapped.some((a) => a.points === 0)) {
+    let minIdx = 0
+    for (let i = 1; i < mapped.length; i++) {
+      if (mapped[i].points <= mapped[minIdx].points) minIdx = i
+    }
+    mapped[minIdx] = { ...mapped[minIdx], points: 0 }
+  }
+
   return {
     id,
     category,
     text,
     hint: opts.hint,
     surnames: opts.surnames,
-    answers: answers.map(([t, points, ...alts]): Answer => ({
-      text: t,
-      points,
-      alts,
-    })),
+    answers: mapped,
   }
 }
