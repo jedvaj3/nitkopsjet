@@ -128,9 +128,11 @@ const sameRoot = (a: string, b: string) =>
   (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))
 
 /**
- * Layer A meaning match: every content word of the input appears (by root)
- * in one of the answer's phrasings, or one phrasing is fully contained in the
- * input — e.g. "kolač" ↔ "pravljenje kolača". Only accepted when unique.
+ * Layer A meaning match:
+ * - Multi-word input (e.g. "Ivan Buljubašić") MUST match EVERY content word in the
+ *   target key so "Ivan cvek" is rejected even though "Ivan" matches.
+ * - Single-word input (e.g. "Buljubašić" or "Frusciante") matches a multi-word answer
+ *   ONLY if it matches the LAST word (surname/main noun), never just a first name like "John".
  */
 export function matchMeaning(q: Question, input: string): number | null {
   const direct = matchAnswer(q, input)
@@ -140,30 +142,54 @@ export function matchMeaning(q: Question, input: string): number | null {
   const hits = new Set<number>()
   answerKeys(q).forEach((keys, i) => {
     for (const key of keys) {
-      const inputInKey = words.every((w) => key.some((k) => sameRoot(w, k)))
-      const keyInInput = key.every((k) => words.some((w) => sameRoot(w, k)))
-      if (inputInKey || keyInInput) {
-        hits.add(i)
-        return
+      const allWordsMatch = words.every((w) => key.some((k) => sameRoot(w, k)))
+      if (!allWordsMatch) continue
+
+      if (words.length >= 2) {
+        // Multi-word input: all words matched; if key is longer, ensure the last key word (surname) was matched
+        const lastKey = key[key.length - 1]
+        if (words.some((w) => sameRoot(w, lastKey))) {
+          hits.add(i)
+          return
+        }
+      } else {
+        // Single-word input: either the key itself is 1 word, or the word matches the LAST word of the key (surname)
+        const lastKey = key[key.length - 1]
+        if (key.length === 1 || sameRoot(words[0], lastKey)) {
+          hits.add(i)
+          return
+        }
       }
     }
   })
   return hits.size === 1 ? [...hits][0] : null
 }
 
-/** Looser fallback: the answer sharing the most roots with the input wins (if unique). */
+/**
+ * Strict overlap fallback: requires ALL input words to match (never accepts partial
+ * guesses like "Ivan cvek" where only 1 of 2 words matched) and prevents matching
+ * solely on a first name.
+ */
 export function matchOverlap(q: Question, input: string): number | null {
   const words = stems(input)
   if (!words.length) return null
   let best = 0
   let bestIdx: number[] = []
   answerKeys(q).forEach((keys, i) => {
-    const all = keys.flat()
-    const score = words.filter((w) => all.some((k) => sameRoot(w, k))).length
-    if (score > best) {
-      best = score
-      bestIdx = [i]
-    } else if (score === best && score > 0) bestIdx.push(i)
+    for (const key of keys) {
+      const matched = words.filter((w) => key.some((k) => sameRoot(w, k))).length
+      // Every word the player typed must match the candidate phrase
+      if (matched < words.length) continue
+      const lastKey = key[key.length - 1]
+      if (key.length > 1 && !words.some((w) => sameRoot(w, lastKey))) continue
+
+      if (matched > best) {
+        best = matched
+        bestIdx = [i]
+      } else if (matched === best && matched > 0 && !bestIdx.includes(i)) {
+        bestIdx.push(i)
+      }
+    }
   })
   return best > 0 && bestIdx.length === 1 ? bestIdx[0] : null
 }
