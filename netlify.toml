@@ -1,5 +1,5 @@
 [build]
-  command = "vite build"
+  command = "pnpm install --frozen-lockfile --prefer-offline && pnpm exec vite build"
   publish = "dist/client"
 [build.environment]
   NODE_VERSION = "24"
