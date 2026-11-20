@@ -7,6 +7,7 @@ import znanost from './znanost'
 import hrvatska from './hrvatska'
 import opca from './opca'
 import slike from './slike'
+import serijeTrileri from './serije_trileri'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -19,4 +20,5 @@ export const EXTRA_QUESTIONS = [
   ...hrvatska,
   ...opca,
   ...slike,
+  ...serijeTrileri,
 ]
