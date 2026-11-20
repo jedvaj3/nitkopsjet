@@ -1,14 +1,12 @@
 import type { Question } from '../types'
 
-const CDN = 'https://jsdelivr.net'
-
 export const SLIKE_QUESTIONS: Question[] = [
   {
     id: 'slike-garaza-1',
     category: 'slike',
     text: 'Nabroji jedan predmet koji vidiš na ovoj slici garaže',
     hint: 'Tapni sliku za povećanje i potraži najsitnije detalje u kutovima!',
-    image: `${CDN}/garaza1.jpg`,
+    image: '/slike/garaza1.jpg',
     answers: [
       { text: 'Radni stol', points: 85, alts: ['stol', 'klupa', 'radna klupa'] },
       { text: 'Bicikl', points: 78, alts: ['bicikla', 'biciklo'] },
