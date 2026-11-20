@@ -917,55 +917,66 @@ function RoundRecap({ room, me, act, now }: RoomViewProps & { now: number }) {
         ))}
       </ol>
 
-      <div className="mt-4 rounded-2xl bg-black/30 p-4 ring-1 ring-white/5">
-        <p className="mb-2 flex items-center gap-2 font-display text-xs font-bold tracking-wider text-gold uppercase">
-          <Gem className="size-4" /> Najrjeđi odgovori
-        </p>
-        <ul className="flex flex-wrap gap-1.5">
-          {gems.map((g) => (
-            <li
-              key={g.text}
-              className={cn(
-                'rounded-full px-2.5 py-1 text-xs font-semibold ring-1',
-                g.points === 0
-                  ? 'bg-amber-300/15 text-amber-200 ring-amber-300/40'
-                  : 'bg-white/5 ring-white/10',
-              )}
-            >
-              {g.text} · <b>{g.points}</b>
-            </li>
-          ))}
-        </ul>
-        <button
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-          className="mt-3 flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
-        >
-          {open ? 'Sakrij' : 'Prikaži'} sve točne odgovore ({answers.length})
-          <ChevronDown
-            className={cn(
-              'size-4 transition-transform motion-reduce:transition-none',
-              open && 'rotate-180',
-            )}
-          />
-        </button>
-        {open && (
-          <ul className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
-            {answers.map((a) => (
-              <li
-                key={a.text}
-                className={cn(
-                  'flex justify-between gap-2 rounded-lg bg-white/5 px-2 py-1',
-                  given.has(a.text) && 'text-gold',
-                )}
-              >
-                <span className="truncate">{a.text}</span>
-                <b className="tabular-nums">{a.points}</b>
-              </li>
-            ))}
+              <div className="mt-4 rounded-2xl bg-black/30 p-4 ring-1 ring-white/5">
+          <p className="mb-2 flex items-center gap-2 font-display text-xs font-bold tracking-wider text-gold uppercase">
+            <Gem className="size-4" /> Najrjeđi odgovori (ispod 50 skriveni)
+          </p>
+          <ul className="flex flex-wrap gap-1.5">
+            {gems.map((g) => {
+              const hide = g.points < 50 && !given.has(g.text)
+              return (
+                <li
+                  key={g.text}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-xs font-semibold ring-1',
+                    g.points === 0
+                      ? 'bg-amber-300/15 text-amber-200 ring-amber-300/40'
+                      : 'bg-white/5 ring-white/10',
+                    hide && 'text-muted-foreground italic',
+                  )}
+                >
+                  {hide ? '🔒 ???' : g.text} · <b>{g.points}</b>
+                </li>
+              )
+            })}
           </ul>
-        )}
-      </div>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            className="mt-3 flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
+          >
+            {open ? 'Sakrij' : 'Prikaži'} sve točne odgovore ({answers.length})
+            <ChevronDown
+              className={cn(
+                'size-4 transition-transform motion-reduce:transition-none',
+                open && 'rotate-180',
+              )}
+            />
+          </button>
+          {open && (
+            <ul className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+              {answers.map((a) => {
+                const hide = a.points < 50 && !given.has(a.text)
+                return (
+                  <li
+                    key={a.text}
+                    className={cn(
+                      'flex justify-between gap-2 rounded-lg bg-white/5 px-2 py-1',
+                      given.has(a.text) && 'text-gold',
+                      hide && 'text-muted-foreground italic',
+                    )}
+                  >
+                    <span className="truncate">
+                      {hide ? '🔒 ??? (tajni odgovor)' : a.text}
+                    </span>
+                    <b className="tabular-nums">{a.points}</b>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+
 
       <div className="mt-4 text-center">
         {isHost ? (
