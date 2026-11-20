@@ -211,15 +211,4 @@ export default [
       ['Zatvaranje ulaza u tunele kamenjem', 0],
     ],
   ),
-  q(
-    'from-09-medicinski-slucajevi',
-    'from',
-    'Ozljede, bolesti i medicinski zahvati koje je liječila Kristi u seriji From',
-    [
-      ['Ethanova probodena noga nakon sudara', 75, 'Ethanova noga', 'Noga'],
-      ['Boydova drhtavica / Parkinsonova bolest', 70, 'Parkinsonova bolest', 'Drhtavica ruku'],
-      ['Ellisovo probodeno plućno krilo nožem', 65, 'Ellis uboden', 'Plućno krilo'],
-      ['Kelly pribijena metalnom šipkom za stablo', 65, 'Kelly u šumi', 'Šipka u glavi'],
-      ['Obdukcija čudovišta Smileyja', 70, 'Obdukcija', 'Seciranje čudovišta'],
-      ['Fatimina lažna trudnoća', 60, 'Fatimina trudnoća', 'Trudnoća'],
-      ['Randallove rane na licu od čudovišta', 55, 'Randallovo lice', 'Randall'],
+]
