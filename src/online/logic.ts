@@ -470,9 +470,16 @@ export function lockAnswers(
 }
 
 function startReveal(state: RoomState, now: number) {
-  state.rounds[state.roundIdx].revealIdx = 0
+  const round = state.rounds[state.roundIdx]
+  round.order = [...round.order].sort(
+    (a, b) =>
+      (round.entries?.[a]?.[0]?.ms ?? Infinity) -
+      (round.entries?.[b]?.[0]?.ms ?? Infinity),
+  )
+  round.revealIdx = 0
   revealStep(state, now)
 }
+
 
 /** Reveal the next answer in the sequence, or ask for a replacement if it's a duplicate. */
 function revealStep(state: RoomState, now: number) {
