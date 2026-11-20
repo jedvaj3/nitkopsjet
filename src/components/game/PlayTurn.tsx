@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, Loader2, Scale, Send, Timer } from 'lucide-react'
+import {
+  ArrowRight,
+  Loader2,
+  Maximize2,
+  Scale,
+  Send,
+  Timer,
+  X,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { categoryEmoji, categoryName } from '@/game/questions'
 import { judgeLocally } from '@/game/judgeClient'
@@ -17,12 +25,9 @@ interface Props {
   totalRounds: number
   player: number
   playerName?: string
-  /** Classes for the "Na redu" chip. */
   playerChip?: string
   timer: number
-  /** Answers already taken by the other player in this round. */
   takenAnswers: number[]
-  /** Valid unlisted answers already given in this round. */
   takenNovels?: string[]
   onComplete: (turn: Turn) => void
 }
@@ -46,6 +51,7 @@ export function PlayTurn({
   const [revealed, setRevealed] = useState(false)
   const [timeLeft, setTimeLeft] = useState(timer)
   const [judging, setJudging] = useState(false)
+  const [zoomed, setZoomed] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const startedAt = useRef(0)
 
@@ -173,6 +179,47 @@ export function PlayTurn({
           <p className="mt-3 text-sm text-muted-foreground">{question.hint}</p>
         )}
 
+        {question.image && (
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => setZoomed(true)}
+              className="group relative block w-full overflow-hidden rounded-2xl border border-white/15 bg-black/40 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+            >
+              <img
+                src={question.image}
+                alt={question.text}
+                className="mx-auto max-h-72 w-full object-contain sm:max-h-96"
+              />
+              <span className="absolute right-2.5 bottom-2.5 inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-xs font-bold text-neon ring-1 ring-cyan-400/40 backdrop-blur-sm transition group-hover:scale-105">
+                <Maximize2 className="size-3.5" /> Povećaj sliku
+              </span>
+            </button>
+          </div>
+        )}
+
+        {zoomed && question.image && (
+          <div
+            onClick={() => setZoomed(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-3 backdrop-blur-sm"
+          >
+            <button
+              type="button"
+              onClick={() => setZoomed(false)}
+              aria-label="Zatvori sliku"
+              className="fixed top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 hover:bg-white/25"
+            >
+              <X className="size-6" />
+            </button>
+            <img
+              src={question.image}
+              alt={question.text}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[90vh] max-w-[95vw] rounded-xl object-contain"
+            />
+          </div>
+        )}
+
         {takenAnswers.length > 0 && (
           <p className="mt-4 text-sm text-muted-foreground">
             Već iskorišteno:{' '}
@@ -250,123 +297,3 @@ export function PlayTurn({
                 <span className="hidden sm:inline">Odgovori</span>
               </button>
             </div>
-            {judging && (
-              <p
-                role="status"
-                className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-neon"
-              >
-                <Scale className="size-4" /> Sudac provjerava smisao odgovora…
-              </p>
-            )}
-            {error && (
-              <p className="mt-2 text-sm font-medium text-rose-400">{error}</p>
-            )}
-            <p className="mt-3 text-xs text-muted-foreground">
-              Velika/mala slova i kvačice nisu bitni, a sitne tipfelere
-              opraštamo.
-            </p>
-          </form>
-        ) : (
-          <div className="mt-6 grid items-center gap-6 sm:grid-cols-[auto_1fr]">
-            <ScoreColumn
-              target={turn.points}
-              wrong={!isCorrect(turn)}
-              onDone={onRevealed}
-              className="mx-auto h-64 sm:h-80"
-            />
-            <div className="text-center sm:text-left">
-              <p className="text-sm text-muted-foreground">
-                {turn.timedOut ? 'Isteklo je vrijeme!' : 'Tvoj odgovor'}
-              </p>
-              {!turn.timedOut && (
-                <p className="font-display text-2xl font-bold break-words">
-                  „{turn.input}”
-                </p>
-              )}
-              <div className="mt-4 min-h-28">
-                {revealed &&
-                  (jackpot ? (
-                    <div className="animate-pop">
-                      <p className="jackpot-text font-display text-4xl font-black sm:text-5xl">
-                        NITKOSJET!
-                      </p>
-                      <p className="mt-2 text-lg">
-                        <b>{matched!.text}</b> — nitko od 100 ispitanika se toga
-                        nije sjetio. 0 bodova!
-                      </p>
-                    </div>
-                  ) : matched ? (
-                    <div className="animate-pop">
-                      <p className="font-display text-3xl font-black text-neon">
-                        {turn.points} {bodova(turn.points)}
-                      </p>
-                      <p className="mt-1 text-lg">
-                        {turn.novel ? 'Priznato' : 'Točno'} —{' '}
-                        <b>{matched.text}</b>.{' '}
-                        {turn.points <= 5
-                          ? 'Odlično, gotovo nitko se toga nije sjetio!'
-                          : turn.points <= 25
-                            ? 'Vrlo dobar odgovor!'
-                            : turn.points <= 60
-                              ? 'Solidno, ali ima i opskurnijih.'
-                              : 'Točno, ali toga se sjetila većina.'}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="animate-pop">
-                      <p className="font-display text-3xl font-black text-rose-400">
-                        Netočno · 100
-                      </p>
-                      <p className="mt-1 text-lg text-muted-foreground">
-                        {turn.timedOut
-                          ? 'Bez odgovora dobivaš maksimalnih 100 kaznenih bodova.'
-                          : 'Taj odgovor nije točan — 100 kaznenih bodova.'}
-                      </p>
-                    </div>
-                  ))}
-                {revealed && turn.judge && turn.judge !== 'baza' && (
-                  <JudgeNote turn={turn} />
-                )}
-              </div>
-              {revealed && (
-                <button
-                  onClick={() => {
-                    sfx.click()
-                    onComplete(turn)
-                  }}
-                  autoFocus
-                  className="btn-gold mt-4 inline-flex h-12 items-center gap-2 rounded-2xl px-6 font-bold"
-                >
-                  Dalje <ArrowRight className="size-5" />
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-/** Explains how a non-list answer was judged. */
-export function JudgeNote({ turn }: { turn: Turn }) {
-  const label =
-    turn.judge === 'ai'
-      ? turn.novel
-        ? 'AI sudac: odgovor nije u anketi, ali ima smisla'
-        : isCorrect(turn)
-          ? 'AI sudac: isto značenje kao odgovor iz ankete'
-          : 'AI sudac: odgovor nema smisla za ovo pitanje'
-      : isCorrect(turn)
-        ? 'Prepoznato po obliku riječi ili tipfeleru'
-        : 'Ovog odgovora nema na popisu'
-  return (
-    <p className="mt-3 flex items-start gap-1.5 text-sm text-muted-foreground">
-      <Scale className="mt-0.5 size-4 shrink-0 text-neon" />
-      <span>
-        <b className="text-foreground">{label}.</b>
-        {turn.reason && <> {turn.reason}</>}
-      </span>
-    </p>
-  )
-}
