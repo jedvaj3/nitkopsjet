@@ -11,6 +11,13 @@ export const CATEGORIES: {
   /** 18+ content: never part of the mix, needs an age confirmation. */
   adult?: boolean
 }[] = [
+    {
+    id: 'slike',
+    name: 'Što je na slici?',
+    emoji: '🖼️',
+    blurb: 'Detalji, predmeti, skriveno',
+  },
+
   {
     id: 'sport',
     name: 'Sport',
