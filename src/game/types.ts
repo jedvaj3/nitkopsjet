@@ -1,4 +1,5 @@
 import type { RoundFormat } from './trio'
+
 export type CategoryId =
   | 'sport'
   | 'geografija'
@@ -10,8 +11,30 @@ export type CategoryId =
   | 'opca'
   | 'slike'
   | 'odrasli'
+  | 'from'
+  | 'tlou'
+  | 'twd'
+  | 'stranger'
+  | 'breakingbad'
+  | 'got'
+  | 'peaky'
+  | 'squidgame'
+  | 'lacasa'
+  | 'dina'
+  | 'oppenheimer'
+  | 'harrypotter'
+  | 'marvel'
+  | 'dc'
+  | 'mentalist'
+  | 'dahmer'
+  | 'dexter'
+  | 'lost'
+  | 'sumrak'
+  | 'najboljegodine'
+  | 'lzn'
+  | 'zauvijeksusjedi'
 
-export type CategoryChoice = CategoryId | 'mix'
+export type CategoryChoice = CategoryId | CategoryId[] | 'mix'
 
 export interface Answer {
   text: string
