@@ -907,7 +907,26 @@ export function toPublic(state: RoomState, now: number): PublicRoom {
     deadline: state.deadline,
     phaseUntil: state.phaseUntil,
     now,
-    rounds,
+        rounds: rounds.map((r, i) =>
+      i === state.roundIdx
+        ? r
+        : {
+            question: r.question,
+            order: r.order,
+            turns: r.turns.map((t) => ({
+              playerId: t.playerId,
+              input: t.input,
+              answerText: t.answerText,
+              points: t.points,
+              timedOut: t.timedOut,
+              seq: t.seq,
+              slot: t.slot,
+              ms: t.ms,
+              novel: t.novel,
+            })),
+          },
+    ),
+
     lastTurn:
       current && current.turns.length
         ? current.turns[current.turns.length - 1]
