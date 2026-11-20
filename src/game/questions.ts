@@ -73,7 +73,141 @@ export const CATEGORIES: {
     blurb: 'Spojevi, krevet, pijane priče',
     adult: true,
   },
+    {
+    id: 'from',
+    name: 'From',
+    emoji: '🌲',
+    blurb: 'Grad bez izlaza, talismani, čudovišta',
+  },
+  {
+    id: 'tlou',
+    name: 'The Last of Us',
+    emoji: '🍄',
+    blurb: 'Joel, Ellie, Krijesnice, zaraženi',
+  },
+  {
+    id: 'twd',
+    name: 'The Walking Dead',
+    emoji: '🧟',
+    blurb: 'Rick, Daryl, Negan, zajednice',
+  },
+  {
+    id: 'stranger',
+    name: 'Stranger Things',
+    emoji: '🚲',
+    blurb: 'Hawkins, Upside Down, Eleven, Vecna',
+  },
+  {
+    id: 'breakingbad',
+    name: 'Breaking Bad',
+    emoji: '🧪',
+    blurb: 'Heisenberg, Jesse, Gus, Saul',
+  },
+  {
+    id: 'got',
+    name: 'Igra prijestolja',
+    emoji: '🐉',
+    blurb: 'Westeros, kuće, zmajevi, Željezno prijestolje',
+  },
+  {
+    id: 'peaky',
+    name: 'Peaky Blinders',
+    emoji: '🎩',
+    blurb: 'Obitelj Shelby, Birmingham, kladionice',
+  },
+  {
+    id: 'squidgame',
+    name: 'Igra lignje',
+    emoji: '🦑',
+    blurb: 'Igre preživljavanja, brojevi, Front Man',
+  },
+  {
+    id: 'lacasa',
+    name: 'La Casa de Papel',
+    emoji: '🎭',
+    blurb: 'Profesor, pljačka, gradovi, maske',
+  },
+  {
+    id: 'dina',
+    name: 'Dina (Dune)',
+    emoji: '🏜️',
+    blurb: 'Arrakis, začin, pješčani crvi, Fremeni',
+  },
+  {
+    id: 'oppenheimer',
+    name: 'Oppenheimer',
+    emoji: '☢️',
+    blurb: 'Projekt Manhattan, Los Alamos, Trinity',
+  },
+  {
+    id: 'harrypotter',
+    name: 'Harry Potter',
+    emoji: '⚡',
+    blurb: 'Hogwarts, čarolije, domovi, horkruksi',
+  },
+  {
+    id: 'marvel',
+    name: 'Marvel (MCU)',
+    emoji: '🛡️',
+    blurb: 'Osvetnici, Kamenje beskonačnosti, zlikovci',
+  },
+  {
+    id: 'dc',
+    name: 'DC Universe',
+    emoji: '🦇',
+    blurb: 'Batman, Gotham, Liga pravde, Joker',
+  },
+  {
+    id: 'mentalist',
+    name: 'Mentalist',
+    emoji: '🧠',
+    blurb: 'Patrick Jane, CBI, Red John',
+  },
+  {
+    id: 'dahmer',
+    name: 'Dahmer',
+    emoji: '👓',
+    blurb: 'Milwaukee, slučaj i detalji serije',
+  },
+  {
+    id: 'dexter',
+    name: 'Dexter',
+    emoji: '🩸',
+    blurb: 'Miami Metro, Kodeks, serijski ubojice',
+  },
+  {
+    id: 'lost',
+    name: 'Lost (Izgubljeni)',
+    emoji: '🏝️',
+    blurb: 'Let 815, DHARMA stanice, Drugi, brojevi',
+  },
+  {
+    id: 'sumrak',
+    name: 'Sumrak saga',
+    emoji: '🧛',
+    blurb: 'Forks, Cullenovi, vukodlaci, Volturi',
+  },
+  {
+    id: 'najboljegodine',
+    name: 'Najbolje godine',
+    emoji: '🌾',
+    blurb: 'Dragošje, obitelj Hajduk, gostionica',
+  },
+  {
+    id: 'lzn',
+    name: 'Lud, zbunjen, normalan',
+    emoji: '☕',
+    blurb: 'Fazlinovići, Izet, Faruk, Damir, San Remo',
+  },
+  {
+    id: 'zauvijeksusjedi',
+    name: 'Zauvijek susjedi',
+    emoji: '🏢',
+    blurb: 'Ferdo, Jura, Bela, Grospićka, Koma',
+  },
+
 ]
+
 
 export const STANDARD_CATEGORIES = CATEGORIES.filter((c) => !c.adult)
 export const isAdultCategory = (id: CategoryId) =>
