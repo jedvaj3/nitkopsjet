@@ -18,6 +18,29 @@ export const FFA_MAX_PLAYERS = 5
 export const WRONG_POINTS = 100
 export const SITE = 'nitkosjet.fun'
 
+const SEEN_STORAGE_KEY = 'nitkosjet_seen_questions_v1'
+
+function loadPersistedPlayed(): Set<string> {
+  try {
+    if (typeof window === 'undefined') return new Set()
+    const raw = window.localStorage.getItem(SEEN_STORAGE_KEY)
+    if (!raw) return new Set()
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? new Set(parsed.map(String)) : new Set()
+  } catch {
+    return new Set()
+  }
+}
+
+function savePersistedPlayed(played: Set<string>) {
+  try {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify([...played]))
+  } catch {
+    // ignore storage errors
+  }
+}
+
 export const roundsFor = (mode: GameMode) =>
   mode === 'solo'
     ? SOLO_ROUNDS
@@ -33,10 +56,6 @@ export const usesLives = (config: GameConfig) =>
 
 export const isMultiplayer = (config: GameConfig) => config.mode !== 'solo'
 
-/**
- * A "side" is whoever competes for the result: a team in `teams` mode,
- * otherwise each player individually.
- */
 export const sideCount = (config: GameConfig) =>
   config.mode === 'teams' ? 2 : config.players.length
 
@@ -74,7 +93,6 @@ export interface Standing {
   side: number
   total: number
   lives: number
-  /** 1-based place; equal results share a place. */
   place: number
 }
 
@@ -102,7 +120,6 @@ export function standings(
   return rows
 }
 
-/** Visual identity per side (player or team). */
 export const SIDE_COLORS = [
   {
     text: 'text-cyan-300',
@@ -131,7 +148,6 @@ export const sideColor = (side: number) =>
 export const playerColor = (config: GameConfig, player: number) =>
   sideColor(sideOf(config, player))
 
-/** Name to show for a player, with the team in teams mode. */
 export const playerLabel = (config: GameConfig, player: number) =>
   config.mode === 'teams'
     ? `${config.players[player]} (${sideName(config, sideOf(config, player))})`
@@ -146,15 +162,6 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-/**
- * Pick `count` questions from the given categories, spreading them across
- * categories first. If the pool is too small it is topped up from the
- * standard (non-18+) categories.
- */
-/**
- * Order a pool so questions not yet played this session come first. When
- * fewer unplayed questions remain than needed, the pool starts over.
- */
 function freshFirst(pool: Question[], count: number, played: Set<string>) {
   const fresh = shuffle(pool.filter((q) => !played.has(q.id)))
   if (fresh.length >= count) return fresh
@@ -162,30 +169,25 @@ function freshFirst(pool: Question[], count: number, played: Set<string>) {
   return [...fresh, ...again]
 }
 
-/**
- * Pick `count` questions from the given categories, spreading them across
- * categories and preferring questions not in `played`. If the pool is too
- * small it is topped up from the standard (non-18+) categories.
- */
 export function pickFromCategories(
   categories: CategoryId[],
   count: number,
   played: Set<string> = new Set(),
 ): Question[] {
+  const mergedPlayed = new Set([...loadPersistedPlayed(), ...played])
   const wanted = new Set(
     categories.length ? categories : STANDARD_CATEGORIES.map((c) => c.id),
   )
   const pool = freshFirst(
     QUESTIONS.filter((q) => wanted.has(q.category)),
     count,
-    played,
+    mergedPlayed,
   )
   const picked: Question[] = []
   const seen = new Set<string>()
-  // Spread across categories, but never at the cost of picking a played question.
   for (const q of pool) {
     if (picked.length >= count) break
-    if (!seen.has(q.category) && !played.has(q.id)) {
+    if (!seen.has(q.category) && !mergedPlayed.has(q.id)) {
       picked.push(q)
       seen.add(q.category)
     }
@@ -200,32 +202,32 @@ export function pickFromCategories(
         (q) => !picked.includes(q) && !isAdultCategory(q.category),
       ),
       count - picked.length,
-      played,
+      mergedPlayed,
     )
     picked.push(...rest.slice(0, count - picked.length))
   }
-  return shuffle(picked)
+  const result = shuffle(picked)
+  const updated = markPlayed(mergedPlayed, result)
+  savePersistedPlayed(updated)
+  return result
 }
 
-/**
- * Add a game's questions to the played set; when a pool has been used up the
- * set is cleared for it, so it plays through again in a new order.
- */
 export function markPlayed(
   played: Set<string>,
   picked: Question[],
 ): Set<string> {
-  // Categories that had to repeat a question have been played through: reset them.
+  const merged = new Set([...loadPersistedPlayed(), ...played])
   const exhausted = new Set(
-    picked.filter((q) => played.has(q.id)).map((q) => q.category),
+    picked.filter((q) => merged.has(q.id)).map((q) => q.category),
   )
   const byId = new Map(QUESTIONS.map((q) => [q.id, q]))
   const next = new Set(
-    [...played].filter(
+    [...merged].filter(
       (id) => !exhausted.has(byId.get(id)?.category as CategoryId),
     ),
   )
   for (const q of picked) next.add(q.id)
+  savePersistedPlayed(next)
   return next
 }
 
@@ -325,17 +327,3 @@ export async function shareText(
     ta.value = text
     document.body.appendChild(ta)
     ta.select()
-    const ok = document.execCommand('copy')
-    ta.remove()
-    return ok ? 'copied' : 'failed'
-  }
-}
-
-/** Croatian plural for "bod": 1 bod, 2–4 boda, 5+ bodova (21 bod, 22 boda…). */
-export function bodova(n: number): string {
-  const m10 = n % 10
-  const m100 = n % 100
-  if (m10 === 1 && m100 !== 11) return 'bod'
-  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'boda'
-  return 'bodova'
-}
