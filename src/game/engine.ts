@@ -327,3 +327,17 @@ export async function shareText(
     ta.value = text
     document.body.appendChild(ta)
     ta.select()
+    const ok = document.execCommand('copy')
+    ta.remove()
+    return ok ? 'copied' : 'failed'
+  }
+}
+
+/** Croatian plural for "bod": 1 bod, 2–4 boda, 5+ bodova (21 bod, 22 boda…). */
+export function bodova(n: number): string {
+  const m10 = n % 10
+  const m100 = n % 100
+  if (m10 === 1 && m100 !== 11) return 'bod'
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'boda'
+  return 'bodova'
+}
