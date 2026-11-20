@@ -46,6 +46,11 @@ export function RoundSummary({
   const gems = lowestAnswers(q)
   const sorted = [...q.answers].sort((a, b) => a.points - b.points)
   const given = new Set(round.turns.map((t) => t.answerIndex))
+  const givenTexts = new Set(
+    round.turns
+      .map((t) => (t.answerIndex !== null ? q.answers[t.answerIndex]?.text : null))
+      .filter((t): t is string => Boolean(t)),
+  )
   const multi = isMultiplayer(config)
   const withLives = usesLives(config)
   const teams = config.mode === 'teams'
@@ -150,7 +155,7 @@ export function RoundSummary({
 
       {teams && (
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {[0, 1].map((side) => (
+          {Array.from({ length: 2 }, (_, side) => (
             <div
               key={side}
               className={cn(
@@ -228,25 +233,35 @@ export function RoundSummary({
           {multi ? 'koje ste mogli' : 'koje si mogao'} pogoditi
         </h3>
         <ul className="grid gap-2 sm:grid-cols-2">
-          {gems.map((g) => (
-            <li
-              key={g.text}
-              className={cn(
-                'flex items-center justify-between rounded-xl bg-black/25 px-3 py-2 ring-1 ring-white/5',
-                g.points === 0 && 'ring-amber-300/40',
-              )}
-            >
-              <span className="font-semibold">{g.text}</span>
-              <span
+          {gems.map((g, i) => {
+            const hideZero = g.points === 0 && !givenTexts.has(g.text)
+            return (
+              <li
+                key={`${g.text}-${i}`}
                 className={cn(
-                  'font-display font-bold tabular-nums',
-                  g.points === 0 ? 'text-gold' : 'text-neon',
+                  'flex items-center justify-between rounded-xl bg-black/25 px-3 py-2 ring-1 ring-white/5',
+                  g.points === 0 && 'ring-amber-300/40',
                 )}
               >
-                {g.points}
-              </span>
-            </li>
-          ))}
+                <span
+                  className={cn(
+                    'font-semibold',
+                    hideZero && 'tracking-wider text-gold/75 italic',
+                  )}
+                >
+                  {hideZero ? '??? (tajni NitkoSjet)' : g.text}
+                </span>
+                <span
+                  className={cn(
+                    'font-display font-bold tabular-nums',
+                    g.points === 0 ? 'text-gold' : 'text-neon',
+                  )}
+                >
+                  {g.points}
+                </span>
+              </li>
+            )
+          })}
         </ul>
 
         <button
@@ -267,6 +282,7 @@ export function RoundSummary({
           <ul className="mt-3 space-y-1.5">
             {sorted.map((a) => {
               const idx = q.answers.indexOf(a)
+              const hideZero = a.points === 0 && !given.has(idx)
               return (
                 <li key={a.text} className="flex items-center gap-3 text-sm">
                   <span className="w-8 text-right font-display font-bold tabular-nums text-muted-foreground">
@@ -275,47 +291,3 @@ export function RoundSummary({
                   <div className="relative h-7 flex-1 overflow-hidden rounded-lg bg-white/5">
                     <div
                       className={cn(
-                        'absolute inset-y-0 left-0 rounded-lg',
-                        a.points === 0 ? 'bg-amber-400/40' : 'bg-cyan-400/25',
-                      )}
-                      style={{ width: `${Math.max(a.points, 1.5)}%` }}
-                    />
-                    <span
-                      className={cn(
-                        'relative flex h-full items-center px-2.5 font-medium',
-                        given.has(idx) && 'font-bold text-gold',
-                      )}
-                    >
-                      {a.text}
-                      {given.has(idx) && ' ← odabrano'}
-                    </span>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </div>
-
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={onNext}
-          autoFocus
-          className="btn-gold inline-flex h-12 items-center gap-2 rounded-2xl px-7 font-bold"
-        >
-          {isLast ? 'Konačni rezultat' : 'Sljedeća runda'}{' '}
-          <ArrowRight className="size-5" />
-        </button>
-      </div>
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Ukupno u ovoj rundi:{' '}
-        {round.turns
-          .map(
-            (t) =>
-              `${multi ? config.players[t.player] + ' ' : ''}${t.points} ${bodova(t.points)}`,
-          )
-          .join(' · ')}
-      </p>
-    </div>
-  )
-}
