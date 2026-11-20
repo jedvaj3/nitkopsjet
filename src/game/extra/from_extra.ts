@@ -183,3 +183,6 @@ export default [
       ['Sjetio se da je u prošlom životu bio Christopher', 65, 'Reinkarnacija Christophera'],
       ['Ukrao je bicikl po gradu u prvoj epizodi', 50, 'Ukrao bicikl', 'Bicikl'],
       ['Uzeo je knjigu sa simbolom od Victorovog oca / u tunelima', 40, 'Bilježnica'],
+    ],
+  ),
+]

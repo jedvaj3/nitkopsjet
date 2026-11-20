@@ -169,9 +169,4 @@ export default [
     ],
   ),
 
-  // ───────────────────────────── LA CASA DE PAPEL ─────────────────────────────
-  q(
-    'lacasa-01-planovi-i-detalji',
-    'lacasa',
-    'Kodna imena planova, lokacije pljački i prepoznatljivi detalji iz La Casa de Papel',
-    [
+]
