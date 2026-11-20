@@ -1,4 +1,5 @@
 import type { Question } from '../types'
+import garaza1 from '../../../public/slike/garaza1.jpg'
 
 export const SLIKE_QUESTIONS: Question[] = [
   {
@@ -6,7 +7,7 @@ export const SLIKE_QUESTIONS: Question[] = [
     category: 'slike',
     text: 'Nabroji jedan predmet koji vidiš na ovoj slici garaže',
     hint: 'Tapni sliku za povećanje i potraži najsitnije detalje u kutovima!',
-    image: '/slike/garaza1.jpg',
+    image: garaza1,
     answers: [
       { text: 'Radni stol', points: 85, alts: ['stol', 'klupa', 'radna klupa'] },
       { text: 'Bicikl', points: 78, alts: ['bicikla', 'biciklo'] },
