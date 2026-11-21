@@ -32,6 +32,7 @@ import { getPersonalBest, getPrefs, savePrefs } from '@/game/storage'
 import { sfx, unlockAudio } from '@/game/sound'
 import type {
   CategoryChoice,
+  CategoryId,
   GameConfig,
   GameMode,
   TimerSetting,
@@ -64,6 +65,21 @@ export function Menu({
   const [mode, setMode] = useState<GameMode>('solo')
   const [format, setFormat] = useState<RoundFormat>(DEFAULT_FORMAT)
   const [category, setCategory] = useState<CategoryChoice>('mix')
+    const selectedCats: CategoryId[] = Array.isArray(category)
+    ? category
+    : category !== 'mix' && category !== 'odrasli'
+      ? [category]
+      : []
+
+  const toggleCategory = (id: CategoryId) => {
+    if (selectedCats.includes(id)) {
+      const next = selectedCats.filter((c) => c !== id)
+      setCategory(next.length === 0 ? 'mix' : next)
+    } else if (selectedCats.length < 5) {
+      setCategory([...selectedCats, id])
+    }
+  }
+
   const [timer, setTimer] = useState<TimerSetting>(30)
   const [players, setPlayers] = useState<string[]>([
     'Igrač 1',
@@ -210,13 +226,20 @@ export function Menu({
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         {/* Category */}
         <section className="panel rounded-3xl p-5 sm:p-6">
-          <Step n={1} title="Odaberi kategoriju" />
+                   <Step
+            n={1}
+            title={
+              selectedCats.length > 0
+                ? `Odabrano kategorija: ${selectedCats.length}/5`
+                : 'Odaberi kategorije (do 5)'
+            }
+          />
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {STANDARD_CATEGORIES.map((c) => (
               <CategoryTile
                 key={c.id}
-                active={category === c.id}
-                onClick={() => setCategory(c.id)}
+                active={selectedCats.includes(c.id)}
+                onClick={() => toggleCategory(c.id)}
                 emoji={c.emoji}
                 name={c.name}
                 sub={`${counts(c.id)} pitanja · ${c.blurb}`}
@@ -231,6 +254,7 @@ export function Menu({
               highlight
             />
           </div>
+
           <button
             onClick={pickAdult}
             aria-pressed={category === adult.id}
