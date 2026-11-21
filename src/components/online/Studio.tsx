@@ -276,7 +276,7 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
           if (!driver) return null
           return (
             <StudioVehicleDrive
-              key={last.seq}
+              key={last.seq-{last.answerText}}
               player={driver}
               fromLeft={idx < half}
               isMe={driver.id === me}
@@ -645,7 +645,7 @@ function Desk({
         title={player.name}
         className={cn(
           'relative z-0 -mb-3 h-16 w-16 transition-opacity motion-reduce:transition-none sm:h-20 sm:w-20',
-          active && !pending && 'opacity-0 scale-50',
+         (last?.playerId === player.id && last.answerText !== null) && 'opacity-0 scale-50',
 
           !player.online && 'opacity-50',
         )}
