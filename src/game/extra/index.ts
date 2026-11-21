@@ -22,6 +22,7 @@ import peaky2 from './peaky_2'
 import squidgame2 from './squidgame_2'
 import lacasa2 from './lacasa_2'
 import harrypotter2 from './harrypotter_2'
+import mentalist2 from './mentalist_2'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -49,4 +50,5 @@ export const EXTRA_QUESTIONS = [
   ...squidgame2,
   ...lacasa2,
   ...harrypotter2,
+  ...mentalist2,
 ]
