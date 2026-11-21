@@ -226,8 +226,12 @@ export function pickQuestions(
 ): Question[] {
   const count = roundsFor(config.mode)
   if (config.category === 'mix') return pickFromCategories([], count, played)
-  return pickFromCategories([config.category], count, played)
+  const cats = Array.isArray(config.category)
+    ? config.category
+    : [config.category]
+  return pickFromCategories(cats, count, played)
 }
+
 
 export const lowestAnswers = (q: Question, max = 6) => {
   const sorted = [...q.answers].sort((a, b) => a.points - b.points)
