@@ -11,6 +11,7 @@ import serijeTrileri from './serije_trileri'
 import fromExtra from './from_extra'
 import sveOstaleSerije from './sve_ostale_serije'
 import dopuna5 from './dopuna_5'
+import from4 from './from_4'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -27,4 +28,5 @@ export const EXTRA_QUESTIONS = [
   ...fromExtra,
   ...sveOstaleSerije,
   ...dopuna5,
+  ...from4,
 ]
