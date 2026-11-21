@@ -1,4 +1,8 @@
-  q('tlou2-10', 'tlou', 'Zimski događaji s Davidom i kanibalima iz Silver Lakea', [
+import { q } from '../q'
+
+export default [
+
+q('tlou2-10', 'tlou', 'Zimski događaji s Davidom i kanibalima iz Silver Lakea', [
     ['Joel je teško ranjen u trbuh na sveučilištu u Coloradu', 75, 'Joelova rana', 'Ranjavanje na sveučilištu'],
     ['Ellie sama lovi jelena u snježnoj šumi lukom i strijelom', 74, 'Lov na jelena', 'Ellie lovi u snijegu'],
     ['Susret Ellie s Davidom i Jamesom u kolibi', 72, 'Susret s Davidom', 'David i James'],
