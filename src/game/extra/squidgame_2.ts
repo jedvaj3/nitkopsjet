@@ -1340,3 +1340,4 @@ export default [
     ['Skriveni otok u Žutom moru okružen strmim liticama i podvodnim pećinama bez signala za mobitel', 0, 'Izolirani otok u Žutom moru', 'Litice bez signala'],
     ['Dugački metalni tobogan koji vodi u krematorij i spalionica s crnim lijesovima s ružičastom mašnom', 0, 'Tobogan prema krematoriju', 'Peći za spaljivanje'],
   ]),
+  ]
