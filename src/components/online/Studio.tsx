@@ -645,6 +645,8 @@ function Desk({
         title={player.name}
         className={cn(
           'relative z-0 -mb-3 h-16 w-16 transition-opacity motion-reduce:transition-none sm:h-20 sm:w-20',
+          active && !pending && 'opacity-0 scale-50',
+
           !player.online && 'opacity-50',
         )}
       />
