@@ -270,7 +270,7 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
           fast && 'panic-glow-fast',
         )}
       >
-        {animating && last && (() => {
+        {last && last.answerText !== null && (() => {
           const idx = room.players.findIndex((p) => p.id === last.playerId)
           const driver = room.players[idx]
           if (!driver) return null
