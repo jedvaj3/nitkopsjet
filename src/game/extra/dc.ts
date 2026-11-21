@@ -1,4 +1,4 @@
-import { q } from '../../q'
+import { q } from '../q'
 
 export default [
   q('dc-01', 'serije', 'dc', 'Koje je pravo ime Batmana?', [
