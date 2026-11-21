@@ -276,7 +276,8 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
           if (!driver) return null
           return (
             <StudioVehicleDrive
-              key={last.seq-{last.answerText}}
+             key={String(last.seq) + String(last.answerText)}
+
               player={driver}
               fromLeft={idx < half}
               isMe={driver.id === me}
