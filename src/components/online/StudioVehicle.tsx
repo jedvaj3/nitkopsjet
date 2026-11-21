@@ -36,11 +36,11 @@ export function vehicleForPlayer(player: PublicPlayer, isMe: boolean): VehicleId
   return VEHICLES[idx].id
 }
 
-function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
+function VehicleArt({ type, isZero, showBeam }: { type: VehicleId; isZero: boolean; showBeam: boolean }) {
   if (type === 'heli') {
     return (
-      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_18px_rgba(0,0,0,0.85)]">
-        <rect x="16" y="10" width="148" height="4" rx="2" fill="#facc15" className="origin-center animate-pulse" />
+      <svg viewBox="0 0 180 95" className="w-36 sm:w-44 drop-shadow-[0_14px_18px_rgba(0,0,0,0.9)]">
+        <rect x="14" y="10" width="152" height="4" rx="2" fill="#facc15" className="origin-center animate-pulse" />
         <rect x="87" y="12" width="6" height="12" fill="#94a3b8" />
         <path d="M12 46 L62 40 L62 56 L12 52 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
         <circle cx="12" cy="49" r="9" fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="6 4" />
@@ -54,8 +54,8 @@ function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
 
   if (type === 'ufo') {
     return (
-      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_20px_rgba(16,185,129,0.55)]">
-        <polygon points="65,62 115,62 135,92 45,92" fill="#10b981" fillOpacity="0.3" />
+      <svg viewBox="0 0 180 105" className="w-36 sm:w-44 drop-shadow-[0_14px_20px_rgba(16,185,129,0.65)]">
+        {showBeam && <polygon points="62,58 118,58 142,104 38,104" fill="#10b981" fillOpacity="0.38" className="animate-pulse" />}
         <ellipse cx="90" cy="36" rx="30" ry="18" fill="#38bdf8" fillOpacity="0.55" stroke="#bae6fd" strokeWidth="2" />
         <ellipse cx="90" cy="48" rx="68" ry="16" fill="#1e293b" stroke="#10b981" strokeWidth="3" />
         <circle cx="45" cy="48" r="4" fill="#facc15" />
@@ -66,13 +66,9 @@ function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
     )
   }
 
-  const bodyColor =
-    type === 'lambo' ? '#f59e0b' :
-    type === 'police' ? '#1e293b' :
-    type === 'f1' ? '#ef4444' : '#eab308'
-
+  const bodyColor = type === 'lambo' ? '#f59e0b' : type === 'police' ? '#1e293b' : type === 'f1' ? '#ef4444' : '#eab308'
   return (
-    <svg viewBox="0 0 180 85" className="w-40 sm:w-48 drop-shadow-[0_12px_16px_rgba(0,0,0,0.85)]">
+    <svg viewBox="0 0 180 85" className="w-36 sm:w-44 drop-shadow-[0_12px_16px_rgba(0,0,0,0.9)]">
       {type === 'police' && (
         <g>
           <rect x="74" y="14" width="14" height="7" rx="2" fill="#ef4444" className="animate-ping" />
@@ -94,20 +90,15 @@ function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
     </svg>
   )
 }
-
 export function VehiclePickerBar() {
   const [selected, setSelected] = useState<VehicleId>(() => getSavedVehicle())
-
   const choose = (id: VehicleId) => {
     setSelected(id)
     setSavedVehicle(id)
   }
-
   return (
     <div className="mt-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-300">
-        Odaberi svoje vozilo za studio
-      </p>
+      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-300">Odaberi svoje vozilo za studio</p>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
         {VEHICLES.map((v) => {
           const active = selected === v.id
@@ -118,9 +109,7 @@ export function VehiclePickerBar() {
               onClick={() => choose(v.id)}
               className={[
                 'flex flex-col items-center justify-center rounded-xl px-2 py-2 text-xs font-bold transition',
-                active
-                  ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-200'
-                  : 'bg-slate-900/80 text-white/80 hover:bg-slate-800',
+                active ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-200' : 'bg-slate-900/80 text-white/80 hover:bg-slate-800',
               ].join(' ')}
             >
               <span className="text-lg">{v.emoji}</span>
@@ -146,59 +135,47 @@ export function StudioVehicleDrive({
   isZero: boolean
   answerText: string | null
 }) {
-  const [step, setStep] = useState<'empty_arrive' | 'boarded' | 'arc' | 'diagram' | 'return' | 'vanish'>('empty_arrive')
+  const [step, setStep] = useState<'spawn_empty' | 'board' | 'stunt' | 'diagram' | 'return_desk' | 'vanish'>('spawn_empty')
   const vehicle = vehicleForPlayer(player, isMe)
   const isAir = vehicle === 'heli' || vehicle === 'ufo'
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep('boarded'), 450),
-      setTimeout(() => setStep('arc'), 850),
-      setTimeout(() => setStep('diagram'), 1450),
-      setTimeout(() => setStep('return'), 2850),
-      setTimeout(() => setStep('vanish'), 3650),
+      setTimeout(() => setStep('board'), 350),
+      setTimeout(() => setStep('stunt'), 700),
+      setTimeout(() => setStep('diagram'), 1250),
+      setTimeout(() => setStep('return_desk'), 2450),
+      setTimeout(() => setStep('vanish'), 3050),
     ]
     return () => timers.forEach(clearTimeout)
   }, [player.id, answerText])
 
-  const deskX = fromLeft ? '14%' : '86%'
-  const midArcX = fromLeft ? '31%' : '69%'
+  const deskX = fromLeft ? '16%' : '84%'
+  const stuntX = fromLeft ? '30%' : '70%'
   const diagramX = fromLeft ? 'calc(50% - 175px)' : 'calc(50% + 175px)'
+  const leftPos = step === 'spawn_empty' || step === 'board' || step === 'return_desk' || step === 'vanish' ? deskX : step === 'stunt' ? stuntX : diagramX
+  const topPos =
+    step === 'spawn_empty' || step === 'board' || step === 'return_desk' || step === 'vanish'
+      ? step === 'spawn_empty' && isAir ? '4%' : '34%'
+      : step === 'stunt' ? (isAir ? '8%' : '46%') : (isAir ? '22%' : '48%')
 
-  const leftPos =
-    step === 'empty_arrive' || step === 'boarded' || step === 'return' || step === 'vanish'
-      ? deskX
-      : step === 'arc'
-        ? midArcX
-        : diagramX
+  const stuntRotate =
+    step === 'stunt'
+      ? vehicle === 'heli' ? (fromLeft ? 360 : -360) : vehicle === 'ufo' ? (fromLeft ? -22 : 22) : (fromLeft ? -28 : 28)
+      : step === 'return_desk' ? (fromLeft ? 12 : -12) : 0
 
-  const bottomPos =
-    step === 'arc'
-      ? isAir ? '155px' : '42px'
-      : step === 'diagram'
-        ? isAir ? '95px' : '16px'
-        : '28px'
-
-  const tiltDeg =
-    step === 'arc'
-      ? fromLeft ? -14 : 14
-      : step === 'return'
-        ? fromLeft ? 10 : -10
-        : 0
-
-  const faceRight =
-    step === 'return' || step === 'vanish' ? !fromLeft : fromLeft
-
-  const showDriverInside = step !== 'empty_arrive'
+  const faceRight = step === 'return_desk' || step === 'vanish' ? !fromLeft : fromLeft
+  const driverInside = step !== 'spawn_empty' && step !== 'vanish'
+  const showDriftSmoke = !isAir && (step === 'stunt' || step === 'diagram')
 
   return (
     <div
       style={{
         left: leftPos,
-        bottom: bottomPos,
+        top: topPos,
         opacity: step === 'vanish' ? 0 : 1,
-        transform: `translateX(-50%) rotate(${tiltDeg}deg) scale(${step === 'vanish' ? 0.6 : 1})`,
-        transition: 'all 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        transform: `translate(-50%, -50%) rotate(${stuntRotate}deg) scale(${step === 'vanish' ? 0.5 : 1})`,
+        transition: 'all 0.55s cubic-bezier(0.22, 1, 0.36, 1)',
       }}
       className="pointer-events-none absolute z-30 flex flex-col items-center"
     >
@@ -206,31 +183,20 @@ export function StudioVehicleDrive({
         <div
           className={[
             'mb-1 rounded-xl px-3 py-1 text-xs font-black shadow-lg ring-1 sm:text-sm',
-            isZero
-              ? 'bg-emerald-500 text-slate-950 ring-emerald-200 animate-bounce'
-              : 'bg-slate-900/95 text-amber-300 ring-amber-400/50',
+            isZero ? 'bg-emerald-500 text-slate-950 ring-emerald-200 animate-bounce' : 'bg-slate-900/95 text-amber-300 ring-amber-400/50',
           ].join(' ')}
         >
           {player.name}: “{answerText}”
         </div>
       )}
-
       <div className="relative flex flex-col items-center">
-        <div
-          className={[
-            'relative z-10 -mb-7 transition-all duration-300 sm:-mb-8',
-            showDriverInside ? 'scale-100 opacity-100' : '-translate-y-4 scale-50 opacity-0',
-          ].join(' ')}
-        >
-          <Avatar
-            id={player.avatar}
-            mood={isZero ? 'happy' : 'thinking'}
-            className="h-11 w-11 sm:h-12 sm:w-12"
-          />
+        <div className={['relative z-10 -mb-7 transition-all duration-200 sm:-mb-8', driverInside ? 'scale-100 opacity-100' : '-translate-y-4 scale-50 opacity-0'].join(' ')}>
+          <Avatar id={player.avatar} mood={isZero ? 'happy' : 'thinking'} className="h-11 w-11 sm:h-12 sm:w-12" />
         </div>
         <div className={faceRight ? '' : '-scale-x-100'}>
-          <VehicleArt type={vehicle} isZero={isZero} />
+          <VehicleArt type={vehicle} isZero={isZero} showBeam={vehicle === 'ufo' && (step === 'board' || step === 'vanish')} />
         </div>
+        {showDriftSmoke && <div className="absolute -bottom-1 flex gap-1 text-lg"><span className="animate-ping">💨</span></div>}
       </div>
     </div>
   )
