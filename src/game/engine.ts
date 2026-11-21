@@ -175,43 +175,31 @@ export function pickFromCategories(
   played: Set<string> = new Set(),
 ): Question[] {
   const mergedPlayed = new Set([...loadPersistedPlayed(), ...played])
-  const wanted = new Set(
-    categories.length ? categories : STANDARD_CATEGORIES.map((c) => c.id),
-  )
-  const pool = freshFirst(
-    QUESTIONS.filter((q) => wanted.has(q.category)),
-    count,
-    mergedPlayed,
-  )
+  const order: CategoryId[] = categories.length
+    ? [...new Set(categories)]
+    : STANDARD_CATEGORIES.map((c) => c.id)
+
+  const buckets = new Map<CategoryId, Question[]>()
+  for (const cat of order) {
+    const allInCat = QUESTIONS.filter((q) => q.category === cat)
+    buckets.set(cat, freshFirst(allInCat, count, mergedPlayed))
+  }
+
   const picked: Question[] = []
-  const seen = new Set<string>()
-  for (const q of pool) {
-    if (picked.length >= count) break
-    if (!seen.has(q.category) && !mergedPlayed.has(q.id)) {
-      picked.push(q)
-      seen.add(q.category)
+  let addedInPass = true
+  while (picked.length < count && addedInPass) {
+    addedInPass = false
+    for (const cat of order) {
+      if (picked.length >= count) break
+      const nextQ = buckets.get(cat)?.shift()
+      if (nextQ) {
+        picked.push(nextQ)
+        addedInPass = true
+      }
     }
   }
-  for (const q of pool) {
-    if (picked.length >= count) break
-    if (!picked.includes(q)) picked.push(q)
-  }
-  if (picked.length < count) {
-    const rest = freshFirst(
-      QUESTIONS.filter(
-        (q) => !picked.includes(q) && !isAdultCategory(q.category),
-      ),
-      count - picked.length,
-      mergedPlayed,
-    )
-    picked.push(...rest.slice(0, count - picked.length))
-  }
-  const result = shuffle(picked)
-  const updated = markPlayed(mergedPlayed, result)
-  savePersistedPlayed(updated)
-  return result
+  return picked
 }
-
 export function markPlayed(
   played: Set<string>,
   picked: Question[],
