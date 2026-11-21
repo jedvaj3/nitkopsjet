@@ -12,6 +12,8 @@ import fromExtra from './from_extra'
 import sveOstaleSerije from './sve_ostale_serije'
 import dopuna5 from './dopuna_5'
 import from4 from './from_4'
+import lost2 from './lost_2'
+import twd2 from './twd_2'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -29,4 +31,6 @@ export const EXTRA_QUESTIONS = [
   ...sveOstaleSerije,
   ...dopuna5,
   ...from4,
+  ...lost2,
+  ...twd2,
 ]
