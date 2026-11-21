@@ -24,6 +24,7 @@ import lacasa2 from './lacasa_2'
 import harrypotter2 from './harrypotter_2'
 import mentalist2 from './mentalist_2'
 import marvel2 from './marvel_2'
+import najboljeGodine from './najbolje_godine'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -53,4 +54,5 @@ export const EXTRA_QUESTIONS = [
   ...harrypotter2,
   ...mentalist2,
   ...marvel2,
+  ...najboljeGodine,
 ]
