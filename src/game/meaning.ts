@@ -126,13 +126,13 @@ function answerKeys(q: Question): string[][][] {
 const sameRoot = (a: string, b: string) =>
   a === b ||
   (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))
-
 /**
  * Layer A meaning match:
- * - Multi-word input (e.g. "Ivan Buljubašić") MUST match EVERY content word in the
- *   target key so "Ivan cvek" is rejected even though "Ivan" matches.
- * - Single-word input (e.g. "Buljubašić" or "Frusciante") matches a multi-word answer
- *   ONLY if it matches the LAST word (surname/main noun), never just a first name like "John".
+ * - Short 2-word names (e.g. "Ivan Buljubašić") still require the surname (last word)
+ *   so "Ivan" alone doesn't match.
+ * - Longer descriptive answers (3+ content words, e.g. "bili su vezani povezom sa očiju...")
+ *   accept any 2+ matching content words (or 1 long specific word if all typed words belong to the answer),
+ *   while rejecting wrong details like "vezane ruke" when "ruke" isn't in the answer!
  */
 export function matchMeaning(q: Question, input: string): number | null {
   const direct = matchAnswer(q, input)
@@ -140,20 +140,28 @@ export function matchMeaning(q: Question, input: string): number | null {
   const words = stems(input)
   if (!words.length) return null
   const hits = new Set<number>()
+
   answerKeys(q).forEach((keys, i) => {
     for (const key of keys) {
+      // Svaka bitna riječ koju je igrač upisao mora postojati u točnom odgovoru (odbija "vezane ruke" ako nema ruku!)
       const allWordsMatch = words.every((w) => key.some((k) => sameRoot(w, k)))
       if (!allWordsMatch) continue
 
-      if (words.length >= 2) {
-        // Multi-word input: all words matched; if key is longer, ensure the last key word (surname) was matched
+      if (key.length >= 3) {
+        // Opisni odgovor (3+ ključne riječi): dovoljno je pogoditi 2+ ključne riječi (npr. "vezani povezom")
+        // ili 1 specifičnu ključnu riječ od 5+ slova korijena (npr. "vezani") ako igrač nije napisao ništa pogrešno!
+        const hasSpecific = words.length >= 2 || words[0].length >= 5
+        if (hasSpecific) {
+          hits.add(i)
+          return
+        }
+      } else if (words.length >= 2) {
         const lastKey = key[key.length - 1]
         if (words.some((w) => sameRoot(w, lastKey))) {
           hits.add(i)
           return
         }
       } else {
-        // Single-word input: either the key itself is 1 word, or the word matches the LAST word of the key (surname)
         const lastKey = key[key.length - 1]
         if (key.length === 1 || sameRoot(words[0], lastKey)) {
           hits.add(i)
@@ -162,35 +170,46 @@ export function matchMeaning(q: Question, input: string): number | null {
       }
     }
   })
+
   return hits.size === 1 ? [...hits][0] : null
 }
 
 /**
- * Strict overlap fallback: requires ALL input words to match (never accepts partial
- * guesses like "Ivan cvek" where only 1 of 2 words matched) and prevents matching
- * solely on a first name.
+ * Strict overlap fallback: accepts when all typed words (or at least 2 of 3+ typed words
+ * on long descriptive answers) match the target without conflicting details.
  */
 export function matchOverlap(q: Question, input: string): number | null {
   const words = stems(input)
   if (!words.length) return null
   let best = 0
   let bestIdx: number[] = []
+
   answerKeys(q).forEach((keys, i) => {
     for (const key of keys) {
       const matched = words.filter((w) => key.some((k) => sameRoot(w, k))).length
-      // Every word the player typed must match the candidate phrase
-      if (matched < words.length) continue
-      const lastKey = key[key.length - 1]
-      if (key.length > 1 && !words.some((w) => sameRoot(w, lastKey))) continue
+      if (matched === 0) continue
+
+      if (key.length >= 3) {
+        // Kod dugih opisnih odgovora priznaje ako su sve upisane riječi točne (bar 1 duga ili 2+ riječi)
+        // ili ako se poklapa barem 2 ključne riječi i većina (>= 66%) upisanog teksta
+        const allOk = matched === words.length && (words.length >= 2 || words[0].length >= 5)
+        const majorityOk = matched >= 2 && matched / words.length >= 0.66
+        if (!allOk && !majorityOk) continue
+      } else {
+        if (matched < words.length) continue
+        const lastKey = key[key.length - 1]
+        if (key.length > 1 && !words.some((w) => sameRoot(w, lastKey))) continue
+      }
 
       if (matched > best) {
         best = matched
         bestIdx = [i]
-      } else if (matched === best && matched > 0 && !bestIdx.includes(i)) {
+      } else if (matched === best && !bestIdx.includes(i)) {
         bestIdx.push(i)
       }
     }
   })
+
   return best > 0 && bestIdx.length === 1 ? bestIdx[0] : null
 }
 
