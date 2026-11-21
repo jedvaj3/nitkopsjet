@@ -15,6 +15,7 @@ import from4 from './from_4'
 import lost2 from './lost_2'
 import twd2 from './twd_2'
 import tlou2 from './tlou_2'
+import stranger2 from './stranger_2'
 
 /** Additional standard questions, one compact file per category. */
 export const EXTRA_QUESTIONS = [
@@ -35,4 +36,5 @@ export const EXTRA_QUESTIONS = [
   ...lost2,
   ...twd2,
   ...tlou2,
+  ...stranger2,
 ]
