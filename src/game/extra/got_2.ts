@@ -11,8 +11,6 @@ export default [
     ['Lightbringer (Svjetlonosa — legendarni plameni mač Azora Ahaija)', 68, 'Lightbringer', 'Svjetlonosa'],
     ['Catspaw bodež (bodež od valirijskog čelika kojim je Arya ubila Noćnog kralja)', 75, 'Catspaw bodež', 'Bodež od valirijskog čelika'],
     ['Dawn (Zora — mač Arthura Daynea iskovan iz palog meteora)', 66, 'Dawn', 'Zora'],
-    ['Excalibur', 0, 'Excalibur', 'Mač kralja Arthura'],
-    ['Andúril', 0, 'Andúril', 'Aragornov mač'],
   ]),
   q('got2-02', 'got', 'Članovi Malog vijeća (Small Council) u Kraljevu Grudobranu kroz seriju', [
     ['Tyrion Lannister (kraljev namjesnik i rizničar)', 75, 'Tyrion Lannister', 'Master of Coin'],
@@ -26,8 +24,6 @@ export default [
     ['Bronn (rizničar kraljevstva na samom kraju serije)', 70, 'Bronn', 'Lord Visokog Sada'],
     ['Samwell Tarly (veliki meštar na kraju serije)', 70, 'Samwell Tarly', 'Novi veliki meštar'],
     ['Barristan Selmy (zapovjednik Kraljeve garde)', 68, 'Barristan Selmy', 'Kraljeva garda'],
-    ['Ramsay Bolton', 0, 'Ramsay Bolton', 'Kopile iz Utvrde Straha'],
-    ['Khal Drogo', 0, 'Khal Drogo', 'Vođa Dothrakija'],
   ]),
   q('got2-03', 'got', 'Manje i vazalske plemićke kuće Westerosa (izvan velikih kuća)', [
     ['Kuća Mormont (Medvjeđi otok — Jorah, Jeor i Lyanna Mormont)', 75, 'Kuća Mormont', 'Medvjeđi otok'],
@@ -41,8 +37,6 @@ export default [
     ['Kuća Glover (Deepwood Motte — Robett Glover)', 64, 'Kuća Glover', 'Deepwood Motte'],
     ['Kuća Florent (Selyse Baratheon, Stannisova supruga)', 60, 'Kuća Florent', 'Selyse'],
     ['Kuća Royce (Runestone — Yohn Royce iz Doline)', 66, 'Kuća Royce', 'Yohn Royce'],
-    ['Kuća Baggins', 0, 'Baggins', 'Hobiti iz Okruga'],
-    ['Kuća Atreides', 0, 'Atreides', 'Dina'],
   ]),
   q('got2-04', 'got', 'Stari i povijesni vladari te likovi iz prošlosti Westerosa (prije radnje serije)', [
     ['Aegon I. Osvajač (ujedinitelj Sedam kraljevina na zmaju Balerionu)', 75, 'Aegon Osvajač', 'Aegon I Targaryen'],
@@ -55,8 +49,6 @@ export default [
     ['Maester Aemon Targaryen (slijepi meštar Noćne straže i stric Ludog kralja)', 74, 'Meštar Aemon', 'Aemon Targaryen'],
     ['Robert Baratheon u mladosti (koji je ubio Rhaegara ratnim čekićem na Trozupcu)', 72, 'Mladi Robert na Trozupcu', 'Bitka na Trozupcu'],
     ['Bran Graditelj (osnivač kuće Stark koji je izgradio Zid i Oštrozimlje)', 68, 'Bran Graditelj', 'Bran the Builder'],
-    ['Aragorn sin Arathornov', 0, 'Aragorn', 'Kralj Gondora'],
-    ['Sauron', 0, 'Sauron', 'Gospodar prstenova'],
   ]),
   q('got2-05', 'got', 'Slobodni gradovi i lokacije u Essosu preko Uskog mora', [
     ['Braavos (grad Željezne banke i Kuće crnog i bijelog)', 75, 'Braavos', 'Željezna banka'],
@@ -69,8 +61,6 @@ export default [
     ['Stara Valyria (ruševine drevnog carstva zmajeva i kamenih ljudi)', 74, 'Stara Valyria', 'Valyria'],
     ['Volantis (grad crvenih svećenika R\'hllora i Kinvare)', 66, 'Volantis', 'Crveni hram'],
     ['Lys (grad iz kojeg potječu pirat Salladhor Saan i Doreah)', 60, 'Lys', 'Otok Lys'],
-    ['Dorne (Sunspear)', 0, 'Dorne', 'Nalazi se u Westerosu'],
-    ['Dragonstone (Zmajev Kamen)', 0, 'Dragonstone', 'Otok u Westerosu'],
   ]),
   q('got2-06', 'got', 'Proročanstva, vizije i magija u seriji Igra prijestolja', [
     ['Proročanstvo o Azoru Ahaiju / Princu koji je obećan (Prince That Was Promised)', 75, 'Azor Ahai', 'Princ koji je obećan'],
@@ -82,8 +72,6 @@ export default [
     ['Mijenjanje lica Ljudi bez lica (Faceless Men) u Kući crnog i bijelog u Braavosu', 75, 'Ljudi bez lica', 'Jaqen H\'ghar'],
     ['Vještina Warganja i Zelenog vida (Greensight) Brana Starka i Jojena Reeda', 74, 'Warganje i Zeleni vid', 'Trooka vrana'],
     ['Krvava magija i rođenje tri zmaja iz kamenih jaja na pogrebnoj lomači Khala Droga', 75, 'Rođenje zmajeva u vatri', 'Pogrebna lomača'],
-    ['Kletva Avada Kedavra iz Harryja Pottera', 0, 'Avada Kedavra', 'Ubojita kletva'],
-    ['Prsten nevidljivosti iz Gospodara prstenova', 0, 'Jedinstveni prsten', 'Sauronov prsten'],
   ]),
   q('got2-07', 'got', 'Zavjere, trovanja i tko je zapravo stajao iza ključnih ubojstava u Igri prijestolja', [
     ['Trovanje kralja Joffreyja na Ljubičastom vjenčanju — skovali su ga Olenna Tyrell i Littlefinger', 75, 'Olenna Tyrell i Littlefinger (Joffrey)', 'Ljubičasto vjenčanje'],
@@ -95,8 +83,6 @@ export default [
     ['Ubojstvo Tywina Lannistera samostrelom na zahodu — izvršio njegov sin Tyrion Lannister', 75, 'Tyrion ubija Tywina', 'Samostrel na zahodu'],
     ['Uništenje Velike Baelorove septe divljom vatrom — isplanirala Cersei Lannister uz pomoć Qyburna', 75, 'Cersei i Qyburn (divlja vatra)', 'Baelorova septa'],
     ['Trovanje Mycelle Baratheon u Dorneu — izvršila Ellaria Sand otrovnim poljupcem', 74, 'Ellaria Sand (otrovni poljubac)', 'Smrt Mycelle'],
-    ['Ned Stark je otrovao Roberta Baratheona na lovu', 0, 'Ned otrovao Roberta', 'Roberta je ubio vepar'],
-    ['Arya Stark je naručila Crveno vjenčanje', 0, 'Arya i Crveno vjenčanje', 'Izmišljena zavjera'],
   ]),
   q('got2-08', 'got', 'Službeni krilati moto (riječi) velikih i poznatih kuća Westerosa', [
     ['Kuća Stark: "Winter Is Coming" (Zima dolazi)', 75, 'Winter Is Coming (Stark)', 'Zima dolazi'],
@@ -109,8 +95,6 @@ export default [
     ['Kuća Arryn: "As High as Honor" (Visoko kao čast)', 70, 'As High as Honor (Arryn)', 'Visoko kao čast'],
     ['Kuća Martell: "Unbowed, Unbent, Unbroken" (Nepokoreni, nesagnuti, neslomljeni)', 74, 'Unbowed Unbent Unbroken (Martell)', 'Nepokoreni nesagnuti neslomljeni'],
     ['Kuća Mormont: "Here We Stand" (Ovdje stojimo)', 68, 'Here We Stand (Mormont)', 'Ovdje stojimo'],
-    ['Kuća Stark: "Hakuna Matata"', 0, 'Hakuna Matata', 'Kralj lavova'],
-    ['Kuća Lannister: "Live Long and Prosper"', 0, 'Star Trek pozdrav', 'Spock'],
   ]),
   q('got2-09', 'got', 'Vitezovi Kraljeve garde (Kingsguard) kroz sve sezone Igre prijestolja', [
     ['Ser Jaime Lannister ("Kraljosjek" — zapovjednik Kraljeve garde)', 75, 'Jaime Lannister', 'Kraljosjek'],
@@ -123,8 +107,6 @@ export default [
     ['Ser Podrick Payne (postao vitez Kraljeve garde na samom kraju serije)', 70, 'Podrick Payne', 'Podrick'],
     ['Ser Boros Blount i Ser Mandon Moore (vitez koji je pokušao ubiti Tyriona na Crnovodi)', 66, 'Mandon Moore i Boros Blount', 'Bitka na Crnovodi'],
     ['Sandor Clegane ("Pas" — kratko bio Joffreyjev tjelohranitelj prije nego je napustio bitku)', 72, 'Sandor Clegane (Pas)', 'Fuck the king'],
-    ['Tyrion Lannister', 0, 'Tyrion', 'Patuljak'],
-    ['Samwell Tarly', 0, 'Samwell', 'Meštar'],
   ]),
   q('got2-10', 'got', 'Velike bitke iz serije Igra prijestolja i tko je u njima pobijedio', [
     ['Bitka na Crnovodi (Blackwater — Tyrionova divlja vatra i dolazak Tywina zaustavili Stannisa)', 75, 'Bitka na Crnovodi', 'Divlja vatra'],
@@ -135,8 +117,6 @@ export default [
     ['Duga noć / Bitka za Oštrozimlje (Arya ubija Noćnog kralja i uništava vojsku mrtvih)', 75, 'Bitka za Oštrozimlje', 'Duga noć'],
     ['Spaljivanje Kraljeva Grudobrana (Daenerys na Drogonu uništava grad i Zlatnu družinu)', 75, 'Uništenje Kraljeva Grudobrana', 'The Bells'],
     ['Bitka za Oštrozimlje u 5. sezoni (Ramsay Bolton uništava vojsku Stannisa Baratheona)', 72, 'Poraz Stannisa kod Oštrozimlja', 'Stannisov kraj'],
-    ['Bitka kod Helms Deepa', 0, 'Helmova klisura', 'Gospodar prstenova'],
-    ['Bitka kod Waterlooa', 0, 'Waterloo', 'Napoleon'],
   ]),
   q('got2-11', 'got', 'Vjere, bogovi i religije u svijetu Igre prijestolja', [
     ['Vjera u Sedmoricu (Faith of the Seven — Otac, Majka, Ratnik, Djevica, Kovač, Starica, Neznanac)', 75, 'Vjera u Sedmoricu', 'Sedmorica'],
@@ -146,8 +126,6 @@ export default [
     ['Utopljeni bog (Drowned God — bog Željeznih otoka: "Što je mrtvo ne može umrijeti")', 74, 'Utopljeni bog', 'What is dead may never die'],
     ['Veliki pastuh (Great Stallion — božanstvo Dothrakija)', 66, 'Veliki pastuh', 'Dothraki'],
     ['Vrabci (The Sparrows — vjerski fanatici predvođeni Vrhovnim Vrapcem u Kraljevu Grudobranu)', 74, 'Vrhovni Vrabac (High Sparrow)', 'Vjerski fanatici'],
-    ['Sila (The Force) iz Ratova zvijezda', 0, 'The Force', 'Jedi vitezovi'],
-    ['Zeus i grčki bogovi s Olimpa', 0, 'Zeus i Olimp', 'Grčka mitologija'],
   ]),
   q('got2-12', 'got', 'Zagonetke, tajne poruke i poznate fraze na valirijskom i dothračkom jeziku', [
     ['"Valar Morghulis" — Svi ljudi moraju umrijeti (pozdrav u Braavosu)', 75, 'Valar Morghulis', 'Svi ljudi moraju umrijeti'],
@@ -160,8 +138,6 @@ export default [
     ['"The night is dark and full of terrors" — Noć je mračna i puna užasa (molitva Melisandre)', 75, 'The night is dark and full of terrors', 'Melisandre'],
     ['"You know nothing, Jon Snow" — Ništa ti ne znaš, Jone Snow (Ygritte)', 75, 'You know nothing Jon Snow', 'Ygritte'],
     ['"Chaos is a ladder" — Kaos je ljestvica (Littlefinger u razgovoru s Varysom)', 75, 'Chaos is a ladder', 'Littlefinger'],
-    ['"Wingardium Leviosa"', 0, 'Harry Potter čarolija', 'Lebdenje'],
-    ['"Kamehameha"', 0, 'Dragon Ball', 'Goku'],
   ]),
   q('got2-13', 'got', 'Detalji o podrijetlu i pravom identitetu Jona Snowa (Aegona Targaryena)', [
     ['Pravo rođeno ime mu je Aegon Targaryen (šesti tog imena)', 75, 'Aegon Targaryen', 'Pravo ime'],
@@ -172,8 +148,6 @@ export default [
     ['Rhaegar je poništio brak s Eliom Martell i tajno se vjenčao s Lyannom Stark, pa Jon nije kopile', 74, 'Zakoniti nasljednik prijestolja', 'Tajno vjenčanje'],
     ['Ubio je Daenerys Targaryen bodežom u prijestolnoj dvorani kako bi spriječio daljnje pokolje', 75, 'Ubojstvo Daenerys', 'Završnica serije'],
     ['Za kaznu je ponovno poslan u Noćnu stražu te odlazi s Divljacima i Tormundom sjeverno od Zida', 75, 'Odlazak sjeverno od Zida', 'Povratak na Zid'],
-    ['Njegova biološka majka bila je Catelyn Stark', 0, 'Catelyn Stark', 'Maćeha'],
-    ['Rođen je u Kraljevu Grudobranu tijekom Crvenog vjenčanja', 0, 'Rođen u Kraljevu Grudobranu', 'Pogrešno mjesto'],
   ]),
   q('got2-14', 'got', 'Aryin popis za odstrel (Arya\'s Kill List) i tko je s njega ubijen', [
     ['Joffrey Baratheon (otrovan na vlastitom vjenčanju)', 75, 'Joffrey Baratheon', 'Ljubičasto vjenčanje'],
@@ -187,8 +161,6 @@ export default [
     ['Sandor Clegane / Pas (Arya ga je skinula s popisa i ostavila ranjenog, kasnije se pomirili)', 72, 'Sandor Clegane (Pas)', 'Skinut s popisa'],
     ['Melisandre (Crvena žena — umrla je prirodno nakon bitke za Oštrozimlje)', 70, 'Melisandre', 'Crvena svećenica'],
     ['Ser Ilyn Payne (krvnik koji je odrubio glavu Nedu Starku)', 72, 'Ilyn Payne', 'Kraljevski krvnik'],
-    ['Eddard Stark', 0, 'Ned Stark', 'Njezin otac'],
-    ['Jon Snow', 0, 'Jon Snow', 'Njezin brat'],
   ]),
   q('got2-15', 'got', 'Plaćeničke družine, redovi i posebne organizacije u Igri prijestolja', [
     ['Noćna straža (Night\'s Watch — zakleti čuvari Zida u crnim odorama)', 75, 'Noćna straža', 'Čuvari Zida'],
@@ -200,8 +172,6 @@ export default [
     ['Sinovi Harpije (Sons of the Harpy — maskirani pobunjenici u Meereenu sa zlatnim maskama)', 74, 'Sinovi Harpije', 'Zlatne maske u Meereenu'],
     ['Meštri Citadele (Maesters — red učenjaka i iscjelitelja u Starigradu / Oldtownu s lancima oko vrata)', 72, 'Meštri Citadele', 'Citadela u Oldtownu'],
     ['Željezna banka Braavosa (Iron Bank — najmoćnija financijska institucija svijeta)', 72, 'Željezna banka Braavosa', 'Tycho Nestoris'],
-    ['Red Jedija (Jedi Order)', 0, 'Jedi vitezovi', 'Star Wars'],
-    ['Red Feniksa (Order of the Phoenix)', 0, 'Red Feniksa', 'Harry Potter'],
   ]),
   q('got2-16', 'got', 'Zanimljivi detalji o obitelji Tyrell iz Visokog Sada (Highgarden)', [
     ['Olenna Tyrell ("Kraljica trnja" — oštroumna baka koja je otrovala Joffreyja)', 75, 'Olenna Tyrell', 'Kraljica trnja'],
@@ -212,8 +182,6 @@ export default [
     ['Margaery, Loras i Mace poginuli su u eksploziji divlje vatre u Velikoj Baelorovoj septi', 75, 'Smrt u Baelorovoj septi', 'Divlja vatra'],
     ['Olenna Tyrell na samrti je priznala Jaimeju Lannisteru da je ona otrovala Joffreyja ("Tell Cersei. I want her to know it was me.")', 75, 'Priznanje Olenne Tyrell', 'Tell Cersei it was me'],
     ['Obiteljski grb kuće Tyrell je zlatna ruža na zelenoj podlozi', 72, 'Zlatna ruža', 'Grb Tyrella'],
-    ['Olenna Tyrell je bila majka Eddarda Starka', 0, 'Majka Neda Starka', 'Pogrešna obitelj'],
-    ['Kuća Tyrell je vladala Željeznim otocima', 0, 'Željezni otoci', 'Pogrešna regija'],
   ]),
   q('got2-17', 'got', 'Detalji o Littlefingeru (Petyru Baelishu) i njegovim spletkama', [
     ['Odrastao je u Riječnim zemljama s Catelyn i Lysom Tully i bio opsjednut Catelyn cijeli život', 75, 'Opsjednut Catelyn Tully', 'Djetinjstvo s Tullyjevima'],
@@ -225,8 +193,6 @@ export default [
     ['Udao je Sansu Stark za okrutnog Ramsayja Boltona u Oštrozimlju', 74, 'Udao Sansu za Ramsayja', 'Pogreška u Oštrozimlju'],
     ['Doveo je vitezove Doline u posljednji čas da spase Jona Snowa u Bitci kopiladi', 74, 'Vitezovi Doline u Bitci kopiladi', 'Spas u zadnji čas'],
     ['Razotkrili su ga Sansa, Arya i Bran u Oštrozimlju te mu je Arya prerezala grlo njegovim vlastitim bodežom', 75, 'Smrt u Oštrozimlju', 'Arya ga ubija'],
-    ['Littlefinger je postao kralj Sedam kraljevina na kraju serije', 0, 'Kralj Westerosa', 'Lažni kraj'],
-    ['Littlefinger je bio zapovjednik Noćne straže', 0, 'Zapovjednik Zida', 'Lažna uloga'],
   ]),
   q('got2-18', 'got', 'Detalji o regiji Dorne i kući Martell u seriji Igra prijestolja', [
     ['Glavno sjedište kuće Martell je Sunspear (Sunčevo Koplje), a vodeni dvorac Vodeni vrtovi', 72, 'Sunspear i Vodeni vrtovi', 'Sjedište Martella'],
@@ -237,8 +203,6 @@ export default [
     ['Ellaria Sand ubila je Mycellu Baratheon otrovnim poljupcem na brodu', 74, 'Trovanje Mycelle poljupcem', 'Dugačak oproštaj'],
     ['Cersei se osvetila Ellariji Sand tako što je otrovala njezinu kćer Tyene istim otrovom u tamnici', 74, 'Cerseina osveta u tamnici', 'Otrov za Tyene'],
     ['Dorne je jedino kraljevstvo koje Aegon Osvajač nije uspio osvojiti zmajevima nego tek brakom', 70, 'Nikad osvojeni od Aegona', 'Unbowed Unbent Unbroken'],
-    ['Dorne je zaleđena pustopoljina sjeverno od Zida', 0, 'Zaleđena zemlja', 'Sjever od Zida'],
-    ['Kućom Martell vladao je Walder Frey', 0, 'Walder Frey', 'Pogrešna kuća'],
   ]),
   q('got2-19', 'got', 'Detalji o Željeznim otocima i kući Greyjoy u seriji Igra prijestolja', [
     ['Sjedište kuće Greyjoy je dvorac Pyke izgrađen na morskim hridima povezanim visećim mostovima', 75, 'Dvorac Pyke', 'Viseći mostovi'],
@@ -250,8 +214,6 @@ export default [
     ['Euron je ubio zmaja Rhaegala divovskim samostrelom (Škorpionom) s broda kod Zmajevog Kamena', 74, 'Ubojstvo zmaja Rhaegala', 'Škorpion na brodu'],
     ['Theon se iskupio braneći Brana Starka u Božjoj šumi u Oštrozimlju prije nego ga je ubio Noćni kralj', 75, 'Theonova žrtva za Brana', 'Smrt u Božjoj šumi'],
     ['Grb kuće Greyjoy je zlatni kraken na crnoj podlozi ("We Do Not Sow")', 72, 'Zlatni kraken', 'Mi ne sijemo'],
-    ['Željezni otoci su poznati po najvećim pšeničnim poljima i vinogradima', 0, 'Pšenična polja i vinogradi', 'Mi ne sijemo'],
-    ['Balon Greyjoy je bio otac Jona Snowa', 0, 'Otac Jona Snowa', 'Pogrešan lik'],
   ]),
   q('got2-20', 'got', 'Detalji o kući Bolton i Utvrdi Straha (Dreadfort)', [
     ['Roose Bolton bio je hladnokrvni vazal Starkova koji je izdao Robba na Crvenom vjenčanju', 75, 'Roose Bolton', 'Izdajnik na Crvenom vjenčanju'],
@@ -261,8 +223,6 @@ export default [
     ['Ramsay je ubio svog oca Roosea, maćehu Waldu i novorođenog polubrata kako bi preuzeo Sjever', 74, 'Ramsay ubija oca i obitelj', 'Preuzimanje vlasti'],
     ['U Bitci kopiladi Ramsay je ubio malog Rickona Starka strijelom u leđa pred Jonom Snowom', 75, 'Ubojstvo Rickona Starka', 'Trčanje preko polja'],
     ['Sansa Stark je nakon Bitke kopiladi pustila Ramsayjeve vlastite izgladnjele pse da ga pojedu', 75, 'Ramsayja pojeli vlastiti psi', 'Osveta Sanse Stark'],
-    ['Kuća Bolton bila je najvjerniji saveznik Starkova do samog kraja serije', 0, 'Vjerni saveznici Starkova', 'Nikad ih nisu izdali'],
-    ['Utvrda Straha (Dreadfort) nalazi se u pustinji Dornea', 0, 'Dvorac u Dorneu', 'Nalazi se na Sjeveru'],
   ]),
   q('got2-21', 'got', 'Detalji o obitelji Tully i Riječnim zemljama (Riverlands)', [
     ['Sjedište kuće Tully je utvrda Riverrun (Brzorečje) na ušću dviju rijeka', 74, 'Riverrun (Brzorečje)', 'Sjedište Tullyja'],
@@ -273,8 +233,6 @@ export default [
     ['Brynden Tully ("Crna Riba" / Blackfish) bio je slavni ratnik i zapovjednik koji je branio Riverrun', 75, 'Brynden Crna Riba (Blackfish)', 'Stric Catelyn'],
     ['Pogrebni običaj kuće Tully je puštanje pokojnika u čamcu niz rijeku i paljenje gorućom strijelom', 74, 'Pogreb u gorućem čamcu', 'Goruća strijela'],
     ['Grb kuće Tully je srebrna pastrva koja skače na crveno-plavim valovima', 72, 'Srebrna pastrva', 'Grb Tullyja'],
-    ['Edmure Tully je na kraju postao kralj Westerosa na Velikom vijeću', 0, 'Kralj Edmure', 'Sansa ga je ušutkala'],
-    ['Riverrun se nalazi na vrhu planina sjeverno od Zida', 0, 'Sjeverno od Zida', 'Pogrešna lokacija'],
   ]),
   q('got2-22', 'got', 'Zanimljivi detalji o obitelji Arryn i Dolini (The Vale)', [
     ['Sjedište kuće Arryn je neosvojivo planinsko uporište Gniježdo (The Eyrie)', 75, 'Gniježdo (The Eyrie)', 'Planinski dvorac'],
@@ -285,8 +243,6 @@ export default [
     ['Tyrion Lannister je u Gniježdu izborio slobodu suđenjem borbom zahvaljujući plaćeniku Bronnu', 75, 'Suđenje borbom za Tyriona', 'Bronn protiv Ser Vardisa'],
     ['Vitezovi Doline (Knights of the Vale) odlučili su Bitku kopiladi u korist Jona Snowa', 75, 'Vitezovi Doline', 'Dolazak u Bitku kopiladi'],
     ['Grb kuće Arryn je bijeli sokol i polumjesec na plavoj podlozi ("As High as Honor")', 72, 'Bijeli sokol i polumjesec', 'Grb Arryna'],
-    ['Gniježdo se nalazi na obali mora u Zaljevu robova', 0, 'Dvorac na moru', 'Pogrešna lokacija'],
-    ['Jon Arryn je ubio Ludog kralja u prijestolnoj dvorani', 0, 'Ubio Ludog kralja', 'To je bio Jaime'],
   ]),
   q('got2-23', 'got', 'Zanimljivi detalji o Meštru Aemonu i Noćnoj straži na Zidu', [
     ['Zid je visok oko 700 stopa (213 metara) i dugačak 300 milja od leda i magije', 75, 'Visok 700 stopa od leda', 'Dimenzije Zida'],
@@ -297,8 +253,6 @@ export default [
     ['Zapovjednik Jeor Mormont ("Stari medvjed") poklonio je Jonu Snowu mač Dugu kandžu', 74, 'Jeor Mormont', 'Stari medvjed'],
     ['Alliser Thorne i Olly predvodili su pobunu u kojoj su izboli Jona Snowa ("For the Watch")', 75, 'Pobuna i ubojstvo Jona', 'For the Watch'],
     ['Eddison Tollett ("Tužni Edd") bio je posljednji zapovjednik Noćne straže u Oštrozimlju', 70, 'Tužni Edd (Eddison Tollett)', 'Vjerni prijatelj Jona'],
-    ['Pripadnici Noćne straže smiju se ženiti i imati djecu u Crnom zamku', 0, 'Smiju se ženiti', 'Zavjet celibata'],
-    ['Zid je napravljen od crvenog vulkanskog kamena', 0, 'Vulkanski kamen', 'Napravljen je od leda'],
   ]),
   q('got2-24', 'got', 'Detalji o Divljacima (Slobodnom narodu / Free Folk) sjeverno od Zida', [
     ['Mance Rayder ("Kralj iza Zida" — bivši pripadnik Noćne straže koji je ujedinio sve klanove Divljaka)', 75, 'Mance Rayder', 'Kralj iza Zida'],
@@ -309,8 +263,6 @@ export default [
     ['Gilly (Crasterova kći-žena koju je spasio Samwell Tarly zajedno s malim Samom)', 74, 'Gilly', 'Samwellova partnerica'],
     ['Thenni (strašni ljudožderski klan Divljaka s obrijanim glavama i ožiljcima)', 70, 'Thenni (ljudožderi)', 'Klan Thenna'],
     ['Osha (Divljakinja koja je zaštitila Brana i Rickona Starka nakon pada Oštrozimlja)', 72, 'Osha', 'Zaštitnica Brana i Rickona'],
-    ['Divljaci su plaćali porez kralju u Kraljevu Grudobranu', 0, 'Plaćali porez kralju', 'Ne klanjaju se nikome'],
-    ['Mance Rayder je bio rođeni brat Tywina Lannistera', 0, 'Brat Tywina Lannistera', 'Izmišljeno srodstvo'],
   ]),
   q('got2-25', 'got', 'Zanimljivi detalji o strahovukovima (Direwolves) djece obitelji Stark', [
     ['Ghost (Duh — bijeli albino strahovuk Jona Snowa s crvenim očima koji nikad ne laje)', 75, 'Ghost (Duh — Jon Snow)', 'Bijeli strahovuk'],
@@ -320,8 +272,6 @@ export default [
     ['Lady (Dama — strahovučica Sanse Stark koju je Ned Stark morao pogubiti po naredbi Cersei)', 75, 'Lady (Dama — Sansa Stark)', 'Pogubljena u 1. sezoni'],
     ['Shaggydog (Čupavko — crni strahovuk Rickona Starka čiju je glavu Smalljon Umber predao Ramsayju)', 74, 'Shaggydog (Čupavko — Rickon)', 'Rickonov strahovuk'],
     ['Pronađeni su kao šestero štenaca uz mrtvu majku strahovučicu i mrtvog jelena', 75, 'Šest štenaca i mrtvi jelen', 'Prva epizoda'],
-    ['Drogon (crni zmaj kojeg je jahao Bran Stark)', 0, 'Drogon', 'Zmaj Daenerys'],
-    ['Fang (Hagridov pas iz Harryja Pottera)', 0, 'Fang', 'Harry Potter'],
   ]),
   q('got2-26', 'got', 'Detalji o trima zmajevima Daenerys Targaryen i njihovim sudbinama', [
     ['Drogon (najveći crno-crveni zmaj nazvan po Khalu Drogu — jedini preživio i otopio Željezno prijestolje)', 75, 'Drogon (nazvan po Drogu)', 'Jedini preživio'],
@@ -331,8 +281,6 @@ export default [
     ['Izlegli su se na pogrebnoj lomači Khala Droga nakon žrtvovanja vještice Mirri Maz Duur', 75, 'Izlegli se na lomači', 'Kraj 1. sezone'],
     ['Daenerys je zatvorila Rhaegala i Viseriona u katakombe Meereena nakon što je Drogon spalio dijete', 72, 'Zatvoreni u katakombama', 'Katakombe Meereena'],
     ['Viserion je plavim plamenom srušio dio Zida kod Istočne stražarnice', 75, 'Rušenje Zida plavim plamenom', 'Kraj 7. sezone'],
-    ['Balerion Crni Užasa (zmaj kojeg je jahala Sansa Stark)', 0, 'Balerion', 'Zmaj Aegona Osvajača'],
-    ['Smaug (zmaj iz Hobita)', 0, 'Smaug', 'Srednja zemlja'],
   ]),
   q('got2-27', 'got', 'Detalji o Meštru Qyburnu, Planini (Ser Robertu Strongu) i divljoj vatri', [
     ['Qyburn je bio izbačeni meštar iz Citadele zbog zabranjenih eksperimenata na živim ljudima', 75, 'Izbačen iz Citadele', 'Zabranjeni pokusi'],
@@ -343,8 +291,6 @@ export default [
     ['Qyburn i Cersei iskoristili su divlju vatru ispod Velike Baelorove septe da pobiju Vrapce i Tyrelle', 75, 'Eksplozija Baelorove septe', 'Uništenje neprijatelja'],
     ['Qyburn je konstruirao divovske samostrele "Škorpione" za ubijanje zmajeva', 74, 'Samostrel Škorpion', 'Oružje protiv zmajeva'],
     ['Ubila ga je Planina jednim udarcem u glavu na stubama Crvene utvrde dok je odbijao naredbe Cersei', 75, 'Planina ubija Qyburna', 'Cleganebowl'],
-    ['Qyburn je bio tajni sin Eddarda Starka', 0, 'Sin Neda Starka', 'Pogrešno srodstvo'],
-    ['Qyburn je ubio Noćnog kralja u Oštrozimlju', 0, 'Ubio Noćnog kralja', 'To je bila Arya'],
   ]),
   q('got2-28', 'got', 'Zanimljivi detalji o obitelji Baratheon i Ratu pet kraljeva', [
     ['Robert Baratheon (osvojio prijestolje pobunom protiv Ludog kralja, ubio ga divlji vepar u lovu)', 75, 'Robert Baratheon', 'Ubio ga vepar'],
@@ -354,8 +300,6 @@ export default [
     ['Gendry (Robertovo izvanbračno kopile i kovač kojeg je Arya spasila i kojeg je Daenerys proglasila lordom)', 75, 'Gendry Baratheon', 'Kovač iz Kraljeva Grudobrana'],
     ['Pet kraljeva u Ratu pet kraljeva bili su: Joffrey, Stannis, Renly, Robb Stark i Balon Greyjoy', 75, 'Pet kraljeva', 'Joffrey, Stannis, Renly, Robb, Balon'],
     ['Grb kuće Baratheon je okrunjeni crni jelen na zlatnoj podlozi ("Ours Is the Fury")', 74, 'Okrunjeni crni jelen', 'Naš je gnjev'],
-    ['Stannis Baratheon je na kraju serije postao kralj i oženio Daenerys', 0, 'Kralj Stannis', 'Lažni kraj'],
-    ['Robert Baratheon je bio otac Joffreyja, Mycelle i Tommena', 0, 'Biološki otac Joffreyja', 'Otac im je bio Jaime'],
   ]),
   q('got2-29', 'got', 'Detalji o Bijelim hodačima (White Walkers) i Noćnom kralju', [
     ['Stvorila su ih Djeca šume (Children of the Forest) zabadanjem zmajevog stakla (opsidijana) u srce prvog čovjeka', 75, 'Stvorila ih Djeca šume', 'Zmajevo staklo u srce'],
@@ -365,8 +309,6 @@ export default [
     ['Noćni kralj je oživio ubijenog zmaja Viseriona i na njemu srušio Zid kod Istočne stražarnice', 75, 'Ledeni zmaj Viserion', 'Rušenje Zida'],
     ['Noćni kralj je označio Brana Starka u viziji i tako probio čaroliju špilje Trooke vrane', 74, 'Oznaka na Branovoj ruci', 'Napad na špilju'],
     ['Arya Stark je ubila Noćnog kralja u Božjoj šumi Oštrozimlja bodežom od valirijskog čelika', 75, 'Arya ubija Noćnog kralja', 'Božja šuma'],
-    ['Bijeli hodači su došli iz pustinje Dornea na devama', 0, 'Došli iz Dornea', 'Pogrešno podrijetlo'],
-    ['Noćni kralj je govorio tečni visokovalirijski i držao govore u Kraljevu Grudobranu', 0, 'Držao govore', 'Nikad nije progovorio'],
   ]),
   q('got2-30', 'got', 'Zanimljivi detalji o obuci Arye Stark (Syrio Forel i Braavos)', [
     ['Prvi učitelj mačevanja bio joj je Syrio Forel ("Prvi mač Braavosa") koji ju je učio "Plesu vode"', 75, 'Syrio Forel (Ples vode)', 'Prvi mač Braavosa'],
@@ -376,8 +318,6 @@ export default [
     ['U Kući crnog i bijelog morala je postati "Nitko" (No One) i odbaciti svoj identitet', 74, 'Postati Nitko (No One)', 'Odbacivanje imena'],
     ['Nakon što je u mraku ubila Waif (Siroče), rekla je Jaqenu: "Djevojka je Arya Stark iz Oštrozimlja i ide kući"', 75, 'Arya Stark iz Oštrozimlja', 'Pobjeda nad Waif'],
     ['Iskoristila je vještinu mijenjanja lica da prerušena u Waldera Freya otruje cijelu kuću Frey', 75, 'Maska Waldera Freya', 'Osveta Freyjevima'],
-    ['Arya je u Braavosu naučila letjeti na metli', 0, 'Letenje na metli', 'Quidditch'],
-    ['Syrio Forel je bio rođeni brat Tywina Lannistera', 0, 'Brat Tywina', 'Pogrešan lik'],
   ]),
   q('got2-31', 'got', 'Detalji o suđenju Tyrionu Lannisteru i dvoboju Planine i Oberyna', [
     ['Tyrion je optužen da je otrovao kralja Joffreyja na Ljubičastom vjenčanju', 75, 'Optužen za trovanje Joffreyja', 'Ljubičasto vjenčanje'],
@@ -388,8 +328,6 @@ export default [
     ['Oberyn je u dvoboju koristio koplje premazano otrovom manticore i oborio Planinu na tlo', 75, 'Otrovnim kopljem oborio Planinu', 'Otrov manticore'],
     ['Umjesto da ga odmah ubije, Oberyn je vikao "You raped her! You murdered her! You killed her children!" pa mu je Planina zdrobio lubanju', 75, 'Planina zdrobio lubanju Oberynu', 'Kobna pogreška Oberyna'],
     ['Jaime Lannister i Varys su potom tajno oslobodili Tyriona iz tamnice prije pogubljenja', 75, 'Jaime i Varys oslobađaju Tyriona', 'Bijeg iz tamnice'],
-    ['Bronn je pristao boriti se protiv Planine i pobijedio ga', 0, 'Bronn pobijedio Planinu', 'Bronn je odbio borbu'],
-    ['Ned Stark je oslobodio Tyriona na suđenju', 0, 'Ned Stark na suđenju', 'Ned je već bio mrtav'],
   ]),
   q('got2-32', 'got', 'Detalji o Sansi Stark i njezinu putu od naivne djevojke do Kraljice Sjevera', [
     ['U 1. sezoni bila je zaručena za princa Joffreyja i sanjala o životu u Kraljevu Grudobranu', 75, 'Zaruke s Joffreyjem', 'Naivni snovi'],
@@ -400,8 +338,6 @@ export default [
     ['S Jonom Snowom vratila je Oštrozimlje u Bitci kopiladi dovevši vitezove Doline', 75, 'Povratak Oštrozimlja', 'Vitezovi Doline'],
     ['Prozrela je Littlefingerove spletke i osudila ga na smrt u dvorani Oštrozimlja', 75, 'Smrtna presuda Littlefingeru', 'Suđenje u Oštrozimlju'],
     ['Na kraju serije izborila je neovisnost Sjevera i okrunjena je za Kraljicu Sjevera (Queen in the North)', 75, 'Kraljica Sjevera', 'Neovisni Sjever'],
-    ['Sansa je na kraju serije poginula u vatri u Kraljevu Grudobranu', 0, 'Poginula u Kraljevu Grudobranu', 'Preživjela i postala kraljica'],
-    ['Sansa je jahala zmaja Viseriona u Bitci kopiladi', 0, 'Jahala zmaja', 'Nikad nije jahala zmaja'],
   ]),
   q('got2-33', 'got', 'Detalji o Branu Starku i moći Trooke vrane (Three-Eyed Raven)', [
     ['Jaime Lannister ga je u 1. epizodi gurnuo s tornja u Oštrozimlju kad ih je Bran vidio s Cersei ("The things I do for love")', 75, 'Pad s tornja u Oštrozimlju', 'The things I do for love'],
@@ -412,8 +348,6 @@ export default [
     ['Otkrio je pravu istinu o rođenju Jona Snowa u Kuli radosti (Rhaegar + Lyanna = Aegon Targaryen)', 75, 'Vizija Kule radosti', 'Istina o Jonu Snowu'],
     ['Poslužio je kao mamac za Noćnog kralja u Božjoj šumi Oštrozimlja gdje ga je Arya spasila', 75, 'Mamac u Božjoj šumi', 'Susret s Noćnim kraljem'],
     ['Na Velikom vijeću u Zmajevu gnijezdu izabran je za kralja Šest kraljevina ("Bran Slomljeni" / Bran the Broken)', 75, 'Kralj Bran Slomljeni', 'Veliko vijeće'],
-    ['Bran je ponovno prohodao i pobijedio Planinu u dvoboju mačevima', 0, 'Pobijedio Planinu mačem', 'Ostao je u kolicima'],
-    ['Bran je bio otac Daenerys Targaryen', 0, 'Otac Daenerys', 'Pogrešan lik'],
   ]),
   q('got2-34', 'got', 'Detalji o Jaimeju Lannisteru i njegovoj transformaciji kroz seriju', [
     ['Poznat pod prezirnim nadimkom "Kraljosjek" (Kingslayer) jer je s leđa ubio Ludog kralja Aerysa', 75, 'Kraljosjek (Kingslayer)', 'Ubojstvo Ludog kralja'],
@@ -424,8 +358,6 @@ export default [
     ['Došao je sam u Oštrozimlje boriti se protiv vojske mrtvih unatoč tome što je Cersei odbila poslati vojsku', 74, 'Borba za Oštrozimlje', 'Ispunio obećanje'],
     ['Proglasio je Brienne od Tartha vitezom Sedam kraljevina noć prije bitke u Oštrozimlju', 75, 'Proglasio Brienne vitezom', 'Ser Brienne'],
     ['Vratio se u Kraljev Grudobran da spasi Cersei i poginuo s njom u zagrljaju pod ruševinama Crvene utvrde', 75, 'Poginuo s Cersei u Crvenoj utvrdi', 'Završetak u 8. sezoni'],
-    ['Jaime je bio najstariji brat Eddarda Starka', 0, 'Brat Neda Starka', 'Kuća Stark'],
-    ['Jaime je ubio Daenerys u Zmajevu Kamenu', 0, 'Ubio Daenerys', 'To je bio Jon Snow'],
   ]),
   q('got2-35', 'got', 'Detalji o Cersei Lannister i njezinoj vladavini u Kraljevu Grudobranu', [
     ['Kraljica supruga Roberta Baratheona koja ga je mrzila i varala s bratom blizancem Jaimejem', 75, 'Supruga Roberta Baratheona', 'Veza s Jaimejem'],
@@ -436,8 +368,6 @@ export default [
     ['Nakon samoubojstva sina Tommena sjela je na Željezno prijestolje kao prva okrunjena kraljica Westerosa', 75, 'Prva okrunjena kraljica', 'Željezno prijestolje'],
     ['Naredila je pogubljenje Missandei pred vratima Kraljeva Grudobrana što je izazvalo bijes Daenerys', 74, 'Pogubljenje Missandei', 'Provokacija Daenerys'],
     ['Poginula je u podrumu Crvene utvrde u zagrljaju s Jaimejem dok se dvorac rušio od zmajeve vatre', 75, 'Smrt pod ruševinama Crvene utvrde', 'Zajedno s Jaimejem'],
-    ['Cersei je bila rođena sestra Daenerys Targaryen', 0, 'Sestra Daenerys', 'Kuća Targaryen'],
-    ['Cersei se na kraju udala za Jona Snowa', 0, 'Udala se za Jona Snowa', 'Izmišljen brak'],
   ]),
   q('got2-36', 'got', 'Detalji o Ser Jorahu Mormontu i njegovoj odanosti Daenerys Targaryen', [
     ['Sin zapovjednika Noćne straže Jeora Mormonta i prognani bivši gospodar Medvjeđeg otoka', 75, 'Prognani gospodar Medvjeđeg otoka', 'Sin Jeora Mormonta'],
@@ -448,8 +378,6 @@ export default [
     ['Zarazio se smrtonosnom kamenom bolešću (Siva ljuskavica / Greyscale) dok je s Tyrionom prolazio kroz Staru Valyriju', 75, 'Zaraza sivom ljuskavicom', 'Kameni ljudi'],
     ['Izliječio ga je Samwell Tarly u Citadeli zabranjenim i bolnim skidanjem zaražene kože', 75, 'Samwell Tarly ga izliječio', 'Citadela u Oldtownu'],
     ['Poginuo je braneći Daenerys od vojske mrtvih u Bitci za Oštrozimlje ("I\'m hurt")', 75, 'Smrt braneći Daenerys', 'Bitka za Oštrozimlje'],
-    ['Jorah Mormont je bio zapovjednik Kraljeve garde kralja Joffreyja', 0, 'Kraljeva garda Joffreyja', 'Pogrešna služba'],
-    ['Jorah je na kraju postao gospodar Željeznih otoka', 0, 'Gospodar Željeznih otoka', 'Pogrešna titula'],
   ]),
   q('got2-37', 'got', 'Detalji o Sandoru Cleganeu (Psu) i Gregoru Cleganeu (Planini)', [
     ['Gregor Clegane ("Planina" / The Mountain) je kao dječak gurnuo bratovo lice u žeravicu zbog igračke', 75, 'Ožiljci od vatre u djetinjstvu', 'Strah od vatre'],
@@ -460,8 +388,6 @@ export default [
     ['Planina je ubio princa Oberyna Martella u dvoboju za Tyriona pa ga je Qyburn pretvorio u zombija', 75, 'Planina postaje zombi-vitez', 'Ser Robert Strong'],
     ['Braća su se konačno sukobila u gorućoj Crvenoj utvrdi ("Cleganebowl") u 8. sezoni', 75, 'Cleganebowl u Crvenoj utvrdi', 'Završni dvoboj braće'],
     ['Pas je skočio s Planinom kroz zid ravno u vatru kako bi ga napokon ubio', 75, 'Pad obojice u vatru', 'Zajednička smrt'],
-    ['Pas i Planina su bili vjerni sluge kuće Stark od početka serije', 0, 'Sluge kuće Stark', 'Bili su vazali Lannistera'],
-    ['Pas je bio najveći zmaj Daenerys Targaryen', 0, 'Zmaj Daenerys', 'Čovjek je, ne zmaj'],
   ]),
   q('got2-38', 'got', 'Detalji o Meštru Samwellu Tarlyju i Citadeli u Starigradu (Oldtown)', [
     ['Njegov okrutni otac Randyll Tarly prisilio ga je da se odrekne nasljedstva i ode u Noćnu stražu pod prijetnjom smrti', 75, 'Otac Randyll Tarly', 'Prisiljen u Noćnu stražu'],
@@ -472,8 +398,6 @@ export default [
     ['Otkrio je golemu zalihu zmajevog stakla ispod Zmajevog Kamena i javio Jonu Snowu', 74, 'Otkriće zmajevog stakla na Zmajevu Kamenu', 'Karta u knjizi'],
     ['S Gilly je u dnevniku visokog septona Maynarda pronašao zapis o tajnom vjenčanju Rhaegara i Lyanne', 75, 'Dnevnik visokog septona Maynarda', 'Pravi identitet Jona Snowa'],
     ['Na kraju serije postao je veliki meštar (Grand Maester) u Malom vijeću kralja Brana', 74, 'Veliki meštar na kraju', 'Malo vijeće'],
-    ['Samwell Tarly je pobijedio Planinu u dvoboju mačevima', 0, 'Pobijedio Planinu', 'Samwell nije ratnik'],
-    ['Samwell je spalio Kraljev Grudobran na zmaju Rhaegalu', 0, 'Spalio grad na zmaju', 'Pogrešan lik'],
   ]),
   q('got2-39', 'got', 'Detalji o Brienne od Tartha, njezinim zakletvama i podvizima', [
     ['Jedina kći Lorda Selwyna Tartha s Safirnog otoka (Tarth) nadimka "Brienne Ljepotica"', 74, 'Safirni otok (Tarth)', 'Brienne Ljepotica'],
@@ -484,8 +408,6 @@ export default [
     ['Pobijedila je Sandora Cleganea (Psa) u brutalnoj borbi pokraj Gniježda i pogubila Stannisa Baratheona', 75, 'Pobjeda nad Psom i pogubljenje Stannisa', 'Osveta za Renlyja'],
     ['Jaime Lannister ju je proglasio prvom ženom vitezom Sedam kraljevina noć prije bitke u Oštrozimlju', 75, 'Prva žena vitez', 'Ser Brienne od Tartha'],
     ['Na kraju je postala zapovjednica Kraljeve garde i upisala Jaimejeva časna djela u Bijelu knjigu', 75, 'Zapovjednica Kraljeve garde', 'Bijela knjiga'],
-    ['Brienne je bila rođena sestra Cersei Lannister', 0, 'Sestra Cersei', 'Pogrešna obitelj'],
-    ['Brienne je otrovala Joffreyja na vjenčanju', 0, 'Otrovala Joffreyja', 'To je učinila Olenna Tyrell'],
   ]),
   q('got2-40', 'got', 'Zanimljivi detalji o Melisandre (Crvenoj ženi) i vjeri u Gospodara svjetla', [
     ['Crvena svećenica boga R\'hllora (Gospodara svjetla) podrijetlom iz dalekog Asshaija', 75, 'Crvena svećenica iz Asshaija', 'Gospodar svjetla'],
@@ -496,8 +418,6 @@ export default [
     ['Oživjela je ubijenog Jona Snowa u Crnom zamku vatrenom molitvom', 75, 'Oživljavanje Jona Snowa', 'Crni zamak'],
     ['U Bitci za Oštrozimlje zapalila je mačeve Dothrakija i rovove te podsjetila Aryu na njezinu sudbinu ("Plave oči")', 75, 'Zapalila mačeve i rovove', 'Plave oči'],
     ['Nakon pobjede nad Noćnim kraljem skinula je ogrlicu, pretvorila se u staricu i umrla u snijegu', 75, 'Skidanje ogrlice i smrt u snijegu', 'Kraj u 8. sezoni'],
-    ['Melisandre je bila vrhovna septa Vjere u Sedmoricu', 0, 'Vrhovna septa', 'Pogrešna vjera'],
-    ['Melisandre je postala kraljica Željeznih otoka', 0, 'Kraljica Željeznih otoka', 'Pogrešna titula'],
   ]),
   q('got2-41', 'got', 'Detalji o gradu Braavosu, Željeznoj banci i Ljudima bez lica', [
     ['Najbogatiji i najmoćniji od Slobodnih gradova, osnovan od odbjeglih robova Stare Valyrije', 74, 'Osnovan od odbjeglih robova', 'Slobodni grad'],
@@ -507,8 +427,6 @@ export default [
     ['Jaqen H\'ghar dao je Aryi željezni novčić i riječi "Valar Morghulis" za ulazak u hram', 75, 'Željezni novčić i Valar Morghulis', 'Jaqen H\'ghar'],
     ['U podzemlju hrama nalazi se Dvorana lica (Hall of Faces) s licima mrtvih ljudi', 75, 'Dvorana lica (Hall of Faces)', 'Maske mrtvih'],
     ['Braavos je dom poznatih mačevalaca "Plesača vode" poput Syrija Forela', 74, 'Plesači vode i Syrio Forel', 'Mačevanje u Braavosu'],
-    ['Braavos se nalazi u pustinji južno od Sunspeara u Dorneu', 0, 'Grad u pustinji Dornea', 'Nalazi se u Essosu'],
-    ['U Braavosu se uzgajaju svi zmajevi kuće Targaryen', 0, 'Uzgajalište zmajeva', 'To je Zmajev Kamen'],
   ]),
   q('got2-42', 'got', 'Zanimljivi detalji o Ser Davosu Seaworthu ("Vitez od luka" / Onion Knight)', [
     ['Bivši krijumčar iz Buhe rupe (Flea Bottom) u Kraljevu Grudobranu kojem je Stannis odsjekao vrhove prstiju', 75, 'Krijumčar bez vrhova prstiju', 'Flea Bottom'],
@@ -518,8 +436,6 @@ export default [
     ['Otkrio je da je Melisandre spalila Shireen na lomači i zatražio njezino pogubljenje pred Jonom Snowom', 75, 'Suočavanje s Melisandre zbog Shireen', 'Vjerna odanost Shireen'],
     ['Nagovorio je Melisandre da pokuša oživjeti Jona Snowa u Crnom zamku', 75, 'Potaknuo oživljavanje Jona Snowa', 'Crni zamak'],
     ['Bio je najvjerniji savjetnik i desna ruka Jona Snowa te zapovjednik brodovlja na kraju serije', 75, 'Savjetnik Jona Snowa i Master of Ships', 'Malo vijeće'],
-    ['Davos je bio najbolji mačevalac u Sedam kraljevina koji je ubio Planinu', 0, 'Najbolji mačevalac', 'Sam priznaje da je loš borac'],
-    ['Davos je bio rođeni brat Tywina Lannistera', 0, 'Brat Tywina', 'Pogrešna obitelj'],
   ]),
   q('got2-43', 'got', 'Detalji o Crvenom vjenčanju (The Red Wedding) i njegovim posljedicama', [
     ['Održano je u dvorcu Blizanci (The Twins) kuće Frey pod izlikom vjenčanja Edmurea Tullyja i Roslin Frey', 75, 'Dvorac Blizanci (The Twins)', 'Vjenčanje Edmurea Tullyja'],
@@ -529,8 +445,6 @@ export default [
     ['Zavjeru su iz sjene organizirali Tywin Lannister i Roose Bolton koji je za nagradu postao Zaštitnik Sjevera', 75, 'Tywin Lannister i Roose Bolton', 'Izdaja Boltona'],
     ['Prije smrti Catelyn Stark je prerezala grlo mladoj supruzi Waldera Freya (Joyeuse)', 72, 'Catelyn ubija Freyjevu ženu', 'Posljednji očajnički čin'],
     ['Arya Stark se godinama kasnije osvetila tako što je ispekla Freyjeve sinove u piti i otrovala cijelu kuću Frey', 75, 'Aryina osveta pitom i otrovom', 'Leave one wolf alive'],
-    ['Na Crvenom vjenčanju Daenerys je spalila dvorac Blizance svojim zmajevima', 0, 'Daenerys spalila Blizance', 'Daenerys je bila u Essosu'],
-    ['Jon Snow je poginuo na Crvenom vjenčanju', 0, 'Jon Snow poginuo tamo', 'Jon je bio na Zidu'],
   ]),
   q('got2-44', 'got', 'Poznati dvorci i utvrde Sedam kraljevina u Westerosu', [
     ['Oštrozimlje (Winterfell — drevno sjedište kuće Stark na Sjeveru)', 75, 'Oštrozimlje (Winterfell)', 'Kuća Stark'],
@@ -542,16 +456,12 @@ export default [
     ['Gniježdo (The Eyrie — neosvojiva planinska utvrda kuće Arryn u Dolini)', 75, 'Gniježdo (The Eyrie)', 'Kuća Arryn'],
     ['Harrenhal (najveći, ali ukleti i spaljeni dvorac u Riječnim zemljama)', 75, 'Harrenhal', 'Ukleti dvorac'],
     ['Utvrda Straha (Dreadfort — sjedište kuće Bolton)', 72, 'Utvrda Straha (Dreadfort)', 'Kuća Bolton'],
-    ['Hogwarts', 0, 'Hogwarts', 'Škola čarobnjaštva'],
-    ['Minas Tirith', 0, 'Minas Tirith', 'Gospodar prstenova'],
   ]),
   q('got2-45', 'got', 'Detalji o suđenjima borbom (Trial by Combat) u seriji Igra prijestolja', [
     ['Suđenje Tyrionu u Gniježdu — plaćenik Bronn pobjeđuje Ser Vardisa Egena i gura ga kroz Mjesečeva vrata', 75, 'Bronn protiv Ser Vardisa', 'Gniježdo'],
     ['Suđenje Sandoru Cleganeu (Psu) — Pas pobjeđuje Berica Dondarriona i prepolovi mu plameni mač', 75, 'Pas protiv Berica Dondarriona', 'Bratstvo bez barjaka'],
     ['Suđenje Tyrionu u Kraljevu Grudobranu — Planina zdrobi lubanju princu Oberynu Martellu', 75, 'Planina protiv Oberyna Martella', 'Kraljev Grudobran'],
     ['Kralj Tommen Baratheon je ukinuo suđenje borbom pod utjecajem Vrhovnog Vrapca kako bi spriječio Cersei da koristi Planinu', 74, 'Tommen ukinuo suđenje borbom', 'Zabrana suđenja borbom'],
-    ['Ned Stark je pobijedio Jaimeja Lannistera u suđenju borbom', 0, 'Ned protiv Jaimeja', 'Nikad nisu imali suđenje borbom'],
-    ['Jon Snow se borio protiv Ramsayja Boltona na suđenju borbom u Zmajevu Kamenu', 0, 'Jon protiv Ramsayja u Zmajevu Kamenu', 'Izmišljen dvoboj'],
   ]),
   q('got2-46', 'got', 'Poznate pjesme i glazbene teme iz serije Igra prijestolja', [
     ['Kiše Castamerea (The Rains of Castamere — pjesma o Tywinovu uništenju kuće Reyne i znak za Crveno vjenčanje)', 75, 'Kiše Castamerea', 'The Rains of Castamere'],
@@ -560,8 +470,6 @@ export default [
     ['Noćni kralj (The Night King — glazbena tema u Božjoj šumi Oštrozimlja u 8. sezoni)', 74, 'The Night King tema', 'Ramin Djawadi'],
     ['Medvjed i lijepa djevica (The Bear and the Maiden Fair — vesela narodna pjesma u Westerosu)', 72, 'The Bear and the Maiden Fair', 'Narodna pjesma'],
     ['Glavna uvodna špica Igre prijestolja (Ramin Djawadi)', 75, 'Uvodna špica', 'Ramin Djawadi'],
-    ['My Heart Will Go On', 0, 'Titanic pjesma', 'Céline Dion'],
-    ['Bohemian Rhapsody', 0, 'Queen', 'Freddie Mercury'],
   ]),
   q('got2-47', 'got', 'Detalji o sudbinama preživjelih likova na samom kraju serije Igra prijestolja', [
     ['Bran Stark ("Bran Slomljeni") — izabran za kralja Šest kraljevina', 75, 'Bran Stark (kralj)', 'Kralj Westerosa'],
@@ -572,8 +480,6 @@ export default [
     ['Bronn — postaje gospodar Visokog Sada i kraljevski rizničar (Master of Coin)', 74, 'Bronn (Lord Visokog Sada)', 'Master of Coin'],
     ['Brienne od Tartha — postaje zapovjednica Kraljeve garde i upisuje Jaimeja u Bijelu knjigu', 74, 'Brienne (zapovjednica Kraljeve garde)', 'Bijela knjiga'],
     ['Sivi Crv (Grey Worm) — isplovljava s Neokaljanima na otok Naath (rodni otok Missandei)', 74, 'Sivi Crv (otok Naath)', 'Neokaljani'],
-    ['Daenerys Targaryen — vlada Kraljevim Grudobranom s Jonom Snowom', 0, 'Daenerys živa na prijestolju', 'Ubio ju je Jon Snow'],
-    ['Cersei Lannister — pobjegla u Braavos i otvorila banku', 0, 'Cersei u Braavosu', 'Poginula u Crvenoj utvrdi'],
   ]),
   q('got2-48', 'got', 'Poznate krčme, bordeli i mjesta okupljanja u Westerosu i Essosu', [
     ['Krčma na raskrižju (Inn at the Crossroads — gdje je Catelyn uhitila Tyriona, a Arya i Pas se borili s Polliverom)', 75, 'Krčma na raskrižju', 'Inn at the Crossroads'],
@@ -582,8 +488,6 @@ export default [
     ['Buha rupa (Flea Bottom — najsiromašnija četvrt Kraljeva Grudobrana odakle potječu Davos i Gendry)', 75, 'Buha rupa (Flea Bottom)', 'Siromašna četvrt'],
     ['Zmajevo gnijezdo (Dragonpit — ruševine drevne arene u Kraljevu Grudobranu gdje su se održala dva velika sastanka)', 74, 'Zmajevo gnijezdo (Dragonpit)', 'Mjesto sastanka'],
     ['Zimski grad (Winter Town — naselje odmah izvan zidina Oštrozimlja)', 68, 'Zimski grad', 'Uz Oštrozimlje'],
-    ['Kafić Central Perk iz Prijatelja', 0, 'Central Perk', 'New York'],
-    ['Paddy\'s Pub iz Uvijek je sunčano u Philadelphiji', 0, 'Paddy\'s Pub', 'Philadelphia'],
   ]),
   q('got2-49', 'got', 'Teški kvizaški detalji: tko je kome bio talac, štićenik ili zarobljenik u Igri prijestolja', [
     ['Theon Greyjoy — talac i štićenik Eddarda Starka u Oštrozimlju nakon Balonove pobune', 75, 'Theon Greyjoy (u Oštrozimlju)', 'Talac Starkova'],
@@ -593,8 +497,6 @@ export default [
     ['Edmure Tully — dugogodišnji zarobljenik Waldera Freya u tamnicama Blizanaca nakon Crvenog vjenčanja', 74, 'Edmure Tully (u tamnici Blizanaca)', 'Zarobljenik Freyjevih'],
     ['Ellaria Sand — zarobljenica Cersei Lannister u tamnicama Crvene utvrde osuđena gledati smrt svoje kćeri', 74, 'Ellaria Sand (u tamnici Crvene utvrde)', 'Cerseina zatvorenica'],
     ['Jorah Mormont — zarobljenik robovlasnika u Essosu koji se morao boriti u borbenim jamama Meereena', 74, 'Jorah Mormont (u borbenim jamama)', 'Robovlasnici'],
-    ['Eddard Stark — bio je zarobljenik Daenerys Targaryen na Zmajevu Kamenu', 0, 'Ned Stark kod Daenerys', 'Nikad se nisu sreli'],
-    ['Noćni kralj — bio je talac u podrumu Crvene utvrde', 0, 'Noćni kralj kao talac', 'Izmišljen detalj'],
   ]),
   q('got2-50', 'got', 'Brojke, titule i simboli iz svijeta Igre prijestolja', [
     ['Sedam kraljevina (Seven Kingdoms — iako ih je zapravo devet regija pod krunom)', 75, 'Sedam kraljevina', 'Westeros'],
@@ -604,7 +506,5 @@ export default [
     ['8 sezona i 73 epizode (ukupan broj sezona i epizoda serije Igra prijestolja na HBO-u)', 75, '8 sezona i 73 epizode', '73 epizode'],
     ['Valar Morghulis / Valar Dohaeris (dvije rečenice Ljudi bez lica)', 74, 'Valar Morghulis / Dohaeris', 'Braavos'],
     ['Trooka vrana (Three-Eyed Raven — titula Brana Starka)', 75, 'Trooka vrana', 'Bran Stark'],
-    ['12 zmajeva koje je Daenerys dovela u Westeros', 0, '12 zmajeva', 'Imala je samo 3 zmaja'],
-    ['50 sezona serije Igra prijestolja', 0, '50 sezona', 'Serija ima 8 sezona'],
   ]),
 ]
