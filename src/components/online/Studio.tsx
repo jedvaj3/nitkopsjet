@@ -32,7 +32,8 @@ import {
 import { ApiError } from '@/online/client'
 import { Avatar, type AvatarMood } from './Avatar'
 import type { RoomViewProps } from './Lobby'
-import { StudioVehicleDrive } from './StudioVehicle'
+import { StudioVehicleDrive, VehiclePickerBar } from './StudioVehicle'
+
 
 /** The shared TV-studio view for turns, reveals and round summaries. */
 export function Studio({ room, me, act, serverNow }: RoomViewProps) {
@@ -292,6 +293,8 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
           <div className="hidden grid-cols-2 gap-x-3 gap-y-2 lg:grid">
             {desks.slice(half)}
           </div>
+          <VehiclePickerBar />
+
         </div>
 
         <div
