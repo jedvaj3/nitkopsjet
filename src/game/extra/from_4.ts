@@ -1,4 +1,4 @@
-import { q } from "../../q";
+import { q } from "../q"
 
 export default [
   q("from-01", "from", "Muški likovi iz serije From (1.–3. sezona)", [
