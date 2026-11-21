@@ -1,139 +1,8 @@
-import { useEffect, useState } from 'react'
-import { Avatar } from './Avatar'
-import type { PublicPlayer } from '@/online/types'
-
-export type VehicleId = 'fico' | 'police' | 'lambo' | 'heli' | 'f1' | 'ufo'
-
-export const VEHICLES: { id: VehicleId; name: string; emoji: string }[] = [
-  { id: 'fico', name: 'Fićo', emoji: '🚗' },
-  { id: 'police', name: 'Policija', emoji: '🚓' },
-  { id: 'lambo', name: 'Lambo', emoji: '🏎️' },
-  { id: 'heli', name: 'Helikopter', emoji: '🚁' },
-  { id: 'f1', name: 'F1 Bolid', emoji: '🏁' },
-  { id: 'ufo', name: 'NLO', emoji: '🛸' },
-]
-
-const STORAGE_KEY = 'nitkosjet_vehicle'
-
-export function getSavedVehicle(): VehicleId {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY) as VehicleId | null
-    return VEHICLES.some((x) => x.id === v) ? v! : 'fico'
-  } catch {
-    return 'fico'
-  }
-}
-
-export function setSavedVehicle(id: VehicleId) {
-  try {
-    localStorage.setItem(STORAGE_KEY, id)
-  } catch {}
-}
-
-export function vehicleForPlayer(player: PublicPlayer, isMe: boolean): VehicleId {
-  if (isMe) return getSavedVehicle()
-  const idx = (player.name.length + player.avatar) % VEHICLES.length
-  return VEHICLES[idx].id
-}
-
-function playVehicleSound(type: VehicleId) {
-  try {
-    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-    if (!Ctx) return
-    const ctx = new Ctx()
-    const now = ctx.currentTime
-
-    if (type === 'police') {
-      const notes =
-      notes.forEach((freq, i) => {
-        const osc = ctx.createOscillator()
-        const g = ctx.createGain()
-        osc.type = 'square'
-        osc.frequency.setValueAtTime(freq, now + i * 0.28)
-        g.gain.setValueAtTime(0.05, now + i * 0.28)
-        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.28 + 0.26)
-        osc.connect(g); g.connect(ctx.destination)
-        osc.start(now + i * 0.28); osc.stop(now + i * 0.28 + 0.27)
-      })
-    } else if (type === 'fico') {
-      [0, 0.22].forEach((offset) => {
-        const horn = ctx.createOscillator()
-        const g = ctx.createGain()
-        horn.type = 'triangle'
-        horn.frequency.setValueAtTime(440, now + offset)
-        g.gain.setValueAtTime(0.08, now + offset)
-        g.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.16)
-        horn.connect(g); g.connect(ctx.destination)
-        horn.start(now + offset); horn.stop(now + offset + 0.17)
-      })
-    } else if (type === 'f1') {
-      const gears = [,,,]
-      gears.forEach(([f1, f2], i) => {
-        const osc = ctx.createOscillator()
-        const g = ctx.createGain()
-        osc.type = 'sawtooth'
-        osc.frequency.setValueAtTime(f1, now + i * 0.35)
-        osc.frequency.exponentialRampToValueAtTime(f2, now + i * 0.35 + 0.32)
-        g.gain.setValueAtTime(0.055, now + i * 0.35)
-        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.35 + 0.34)
-        osc.connect(g); g.connect(ctx.destination)
-        osc.start(now + i * 0.35); osc.stop(now + i * 0.35 + 0.35)
-      })
-    } else if (type === 'lambo') {
-      const osc = ctx.createOscillator()
-      const g = ctx.createGain()
-      osc.type = 'sawtooth'
-      osc.frequency.setValueAtTime(95, now)
-      osc.frequency.exponentialRampToValueAtTime(290, now + 0.75)
-      osc.frequency.exponentialRampToValueAtTime(120, now + 1.4)
-      g.gain.setValueAtTime(0.08, now)
-      g.gain.exponentialRampToValueAtTime(0.001, now + 1.5)
-      osc.connect(g); g.connect(ctx.destination)
-      osc.start(now); osc.stop(now + 1.55)
-    } else if (type === 'heli') {
-      for (let i = 0; i < 16; i++) {
-        const osc = ctx.createOscillator()
-        const g = ctx.createGain()
-        osc.type = 'sine'
-        osc.frequency.setValueAtTime(68, now + i * 0.13)
-        osc.frequency.exponentialRampToValueAtTime(32, now + i * 0.13 + 0.1)
-        g.gain.setValueAtTime(0.16, now + i * 0.13)
-        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.13 + 0.11)
-        osc.connect(g); g.connect(ctx.destination)
-        osc.start(now + i * 0.13); osc.stop(now + i * 0.13 + 0.12)
-      }
-    } else {
-      const osc = ctx.createOscillator()
-      const g = ctx.createGain()
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(520, now)
-      osc.frequency.exponentialRampToValueAtTime(980, now + 0.8)
-      osc.frequency.exponentialRampToValueAtTime(360, now + 1.7)
-      g.gain.setValueAtTime(0.075, now)
-      g.gain.exponentialRampToValueAtTime(0.001, now + 1.75)
-      osc.connect(g); g.connect(ctx.destination)
-      osc.start(now); osc.stop(now + 1.8)
-    }
-  } catch {}
-}
-
-function SpinningWheel({ cx, cy, angle }: { cx: number; cy: number; angle: number }) {
-  return (
-    <g transform={`translate(${cx}, ${cy})`}>
-      <circle r="15" fill="#09090b" stroke="#64748b" strokeWidth="3" />
-      <g transform={`rotate(${angle})`}>
-        <circle r="7" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
-        <line x1="-7" y1="0" x2="7" y2="0" stroke="#facc15" strokeWidth="2" />
-        <line x1="0" y1="-7" x2="0" y2="7" stroke="#facc15" strokeWidth="2" />
-      </g>
-    </g>
-  )
-}
 function VehicleArt({ type, isZero, showBeam, wheelAngle }: { type: VehicleId; isZero: boolean; showBeam: boolean; wheelAngle: number }) {
   if (type === 'heli') {
     const bladeScale = Math.cos((wheelAngle * Math.PI) / 180)
     return (
-      <svg viewBox="0 0 190 105" className="w-40 sm:w-48 drop-shadow-[0_18px_20px_rgba(0,0,0,0.95)]">
+      <svg viewBox="0 0 190 105" className="w-36 sm:w-44 drop-shadow-[0_18px_20px_rgba(0,0,0,0.95)]">
         <polygon points="85,78 135,78 158,104 62,104" fill="#fef08a" fillOpacity="0.14" />
         <g transform={`translate(95, 12) scale(${bladeScale}, 1)`}>
           <rect x="-82" y="-2" width="164" height="4" rx="2" fill="#facc15" />
@@ -154,7 +23,7 @@ function VehicleArt({ type, isZero, showBeam, wheelAngle }: { type: VehicleId; i
 
   if (type === 'ufo') {
     return (
-      <svg viewBox="0 0 190 110" className="w-40 sm:w-48 drop-shadow-[0_14px_20px_rgba(16,185,129,0.65)]">
+      <svg viewBox="0 0 190 110" className="w-36 sm:w-44 drop-shadow-[0_14px_20px_rgba(16,185,129,0.65)]">
         {showBeam && <polygon points="66,60 124,60 150,108 40,108" fill="#10b981" fillOpacity="0.38" />}
         <ellipse cx="95" cy="36" rx="32" ry="19" fill="#38bdf8" fillOpacity="0.6" stroke="#bae6fd" strokeWidth="2" />
         <ellipse cx="95" cy="50" rx="72" ry="17" fill="#1e293b" stroke="#10b981" strokeWidth="3" />
@@ -168,7 +37,7 @@ function VehicleArt({ type, isZero, showBeam, wheelAngle }: { type: VehicleId; i
 
   const bodyColor = type === 'lambo' ? '#f59e0b' : type === 'police' ? '#1e293b' : type === 'f1' ? '#ef4444' : '#eab308'
   return (
-    <svg viewBox="0 0 215 90" className="w-44 sm:w-52 drop-shadow-[0_14px_16px_rgba(0,0,0,0.95)]">
+    <svg viewBox="0 0 215 90" className="w-40 sm:w-48 drop-shadow-[0_14px_16px_rgba(0,0,0,0.95)]">
       <polygon points="172,50 214,40 214,66 172,58" fill="#fef08a" fillOpacity="0.22" />
       {type === 'police' && (
         <g>
@@ -203,33 +72,49 @@ function VehicleArt({ type, isZero, showBeam, wheelAngle }: { type: VehicleId; i
 
 export function VehiclePickerBar() {
   const [selected, setSelected] = useState<VehicleId>(() => getSavedVehicle())
+  const [open, setOpen] = useState(false)
+  const current = VEHICLES.find((v) => v.id === selected) || VEHICLES[0]
+
   const choose = (id: VehicleId) => {
     setSelected(id)
     setSavedVehicle(id)
     playVehicleSound(id)
+    setOpen(false)
   }
+
   return (
-    <div className="mt-4 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-300">Odaberi svoje vozilo za studio (klikni za zvuk)</p>
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-        {VEHICLES.map((v) => {
-          const active = selected === v.id
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => choose(v.id)}
-              className={[
-                'flex flex-col items-center justify-center rounded-xl px-2 py-2 text-[11px] font-bold transition sm:text-xs',
-                active ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-200' : 'bg-slate-900/80 text-white/80 hover:bg-slate-800',
-              ].join(' ')}
-            >
-              <span className="text-lg">{v.emoji}</span>
-              <span className="mt-0.5 leading-tight">{v.name}</span>
-            </button>
-          )
-        })}
-      </div>
+    <div className="relative mt-2 flex justify-start">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs font-bold text-amber-300 ring-1 ring-white/10 transition hover:bg-white/10"
+      >
+        <span>{current.emoji}</span>
+        <span>{current.name}</span>
+        <span className="text-[10px] text-white/60">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <div className="absolute bottom-9 left-0 z-40 flex flex-wrap gap-1.5 rounded-2xl bg-slate-950/95 p-2 shadow-2xl ring-1 ring-amber-400/40 backdrop-blur">
+          {VEHICLES.map((v) => {
+            const active = selected === v.id
+            return (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => choose(v.id)}
+                className={[
+                  'flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-bold transition',
+                  active ? 'bg-amber-400 text-slate-950' : 'bg-white/5 text-white/80 hover:bg-white/15',
+                ].join(' ')}
+              >
+                <span>{v.emoji}</span>
+                <span>{v.name}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -268,7 +153,6 @@ export function StudioVehicleDrive({
 
   if (elapsed >= 4.8) return null
 
-  // 0.0 -> 1.4s: glatka vožnja do stupa | 1.4 -> 3.4s: mirno stoji uz stup | 3.4 -> 4.8s: glatki povratak
   const goingIn = elapsed < 1.4
   const parked = elapsed >= 1.4 && elapsed < 3.4
   const goingOut = elapsed >= 3.4
@@ -283,15 +167,15 @@ export function StudioVehicleDrive({
   const endX = fromLeft ? 36 : 64
   const curX = startX + (endX - startX) * progress
 
-  // Zračna vozila lete u glatkom luku iznad pultova, auti voze ravno po podu bez poskakivanja!
-  const arcLift = isAir ? Math.sin(progress * Math.PI) * 14 + progress * 10 : 0
-  const curBottom = isAir ? 36 + arcLift : 14
+  // Helikopter i NLO lete visoko po zraku (235px -> 295px) iznad svih igrača, auti voze po čistom podu (10px)!
+  const curBottom = isAir
+    ? 235 + Math.sin(progress * Math.PI) * 60
+    : 10
 
-  // Prirodni nagib ovjesa: blago unazad kod gasa, blago naprijed kod kočenja (nema vrtoglavog skakanja!)
   let pitch = 0
   if (goingIn) {
     const t = elapsed / 1.4
-    pitch = t < 0.7 ? -3.5 : 4.5 // ubrzanje pa kočenje pred stupom
+    pitch = t < 0.7 ? -3.5 : 4.5
   } else if (goingOut) {
     const t = (elapsed - 3.4) / 1.4
     pitch = t < 0.7 ? -3.5 : 3.5
