@@ -1,3 +1,134 @@
+import { useEffect, useState } from 'react'
+import { Avatar } from './Avatar'
+import type { PublicPlayer } from '@/online/types'
+
+export type VehicleId = 'fico' | 'police' | 'lambo' | 'heli' | 'f1' | 'ufo'
+
+export const VEHICLES: { id: VehicleId; name: string; emoji: string }[] = [
+  { id: 'fico', name: 'Fićo', emoji: '🚗' },
+  { id: 'police', name: 'Policija', emoji: '🚓' },
+  { id: 'lambo', name: 'Lambo', emoji: '🏎️' },
+  { id: 'heli', name: 'Helikopter', emoji: '🚁' },
+  { id: 'f1', name: 'F1 Bolid', emoji: '🏁' },
+  { id: 'ufo', name: 'NLO', emoji: '🛸' },
+]
+
+const STORAGE_KEY = 'nitkosjet_vehicle'
+
+export function getSavedVehicle(): VehicleId {
+  try {
+    const v = localStorage.getItem(STORAGE_KEY) as VehicleId | null
+    return VEHICLES.some((x) => x.id === v) ? v! : 'fico'
+  } catch {
+    return 'fico'
+  }
+}
+
+export function setSavedVehicle(id: VehicleId) {
+  try {
+    localStorage.setItem(STORAGE_KEY, id)
+  } catch {}
+}
+
+export function vehicleForPlayer(player: PublicPlayer, isMe: boolean): VehicleId {
+  if (isMe) return getSavedVehicle()
+  const idx = (player.name.length + player.avatar) % VEHICLES.length
+  return VEHICLES[idx].id
+}
+
+function playVehicleSound(type: VehicleId) {
+  try {
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    if (!Ctx) return
+    const ctx = new Ctx()
+    const now = ctx.currentTime
+
+    if (type === 'police') {
+      const notes = [660, 495, 660, 495]
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator()
+        const g = ctx.createGain()
+        osc.type = 'square'
+        osc.frequency.setValueAtTime(freq, now + i * 0.28)
+        g.gain.setValueAtTime(0.05, now + i * 0.28)
+        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.28 + 0.26)
+        osc.connect(g); g.connect(ctx.destination)
+        osc.start(now + i * 0.28); osc.stop(now + i * 0.28 + 0.27)
+      })
+    } else if (type === 'fico') {
+      [0, 0.22].forEach((offset) => {
+        const horn = ctx.createOscillator()
+        const g = ctx.createGain()
+        horn.type = 'triangle'
+        horn.frequency.setValueAtTime(440, now + offset)
+        g.gain.setValueAtTime(0.08, now + offset)
+        g.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.16)
+        horn.connect(g); g.connect(ctx.destination)
+        horn.start(now + offset); horn.stop(now + offset + 0.17)
+      })
+    } else if (type === 'f1') {
+      const gears = [[180, 380], [260, 480], [340, 580], [420, 680]]
+      gears.forEach(([f1, f2], i) => {
+        const osc = ctx.createOscillator()
+        const g = ctx.createGain()
+        osc.type = 'sawtooth'
+        osc.frequency.setValueAtTime(f1, now + i * 0.35)
+        osc.frequency.exponentialRampToValueAtTime(f2, now + i * 0.35 + 0.32)
+        g.gain.setValueAtTime(0.055, now + i * 0.35)
+        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.35 + 0.34)
+        osc.connect(g); g.connect(ctx.destination)
+        osc.start(now + i * 0.35); osc.stop(now + i * 0.35 + 0.35)
+      })
+    } else if (type === 'lambo') {
+      const osc = ctx.createOscillator()
+      const g = ctx.createGain()
+      osc.type = 'sawtooth'
+      osc.frequency.setValueAtTime(95, now)
+      osc.frequency.exponentialRampToValueAtTime(290, now + 0.75)
+      osc.frequency.exponentialRampToValueAtTime(120, now + 1.4)
+      g.gain.setValueAtTime(0.08, now)
+      g.gain.exponentialRampToValueAtTime(0.001, now + 1.5)
+      osc.connect(g); g.connect(ctx.destination)
+      osc.start(now); osc.stop(now + 1.55)
+    } else if (type === 'heli') {
+      for (let i = 0; i < 16; i++) {
+        const osc = ctx.createOscillator()
+        const g = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(68, now + i * 0.13)
+        osc.frequency.exponentialRampToValueAtTime(32, now + i * 0.13 + 0.1)
+        g.gain.setValueAtTime(0.16, now + i * 0.13)
+        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.13 + 0.11)
+        osc.connect(g); g.connect(ctx.destination)
+        osc.start(now + i * 0.13); osc.stop(now + i * 0.13 + 0.12)
+      }
+    } else {
+      const osc = ctx.createOscillator()
+      const g = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(520, now)
+      osc.frequency.exponentialRampToValueAtTime(980, now + 0.8)
+      osc.frequency.exponentialRampToValueAtTime(360, now + 1.7)
+      g.gain.setValueAtTime(0.075, now)
+      g.gain.exponentialRampToValueAtTime(0.001, now + 1.75)
+      osc.connect(g); g.connect(ctx.destination)
+      osc.start(now); osc.stop(now + 1.8)
+    }
+  } catch {}
+}
+
+function SpinningWheel({ cx, cy, angle }: { cx: number; cy: number; angle: number }) {
+  return (
+    <g transform={`translate(${cx}, ${cy})`}>
+      <circle r="15" fill="#09090b" stroke="#64748b" strokeWidth="3" />
+      <g transform={`rotate(${angle})`}>
+        <circle r="7" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
+        <line x1="-7" y1="0" x2="7" y2="0" stroke="#facc15" strokeWidth="2" />
+        <line x1="0" y1="-7" x2="0" y2="7" stroke="#facc15" strokeWidth="2" />
+      </g>
+    </g>
+  )
+}
 function VehicleArt({ type, isZero, showBeam, wheelAngle }: { type: VehicleId; isZero: boolean; showBeam: boolean; wheelAngle: number }) {
   if (type === 'heli') {
     const bladeScale = Math.cos((wheelAngle * Math.PI) / 180)
