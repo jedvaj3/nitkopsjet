@@ -146,41 +146,63 @@ export function StudioVehicleDrive({
   isZero: boolean
   answerText: string | null
 }) {
-  const [phase, setPhase] = useState<'desk' | 'diagram' | 'return'>('desk')
+  const [step, setStep] = useState<'empty_arrive' | 'boarded' | 'arc' | 'diagram' | 'return' | 'vanish'>('empty_arrive')
   const vehicle = vehicleForPlayer(player, isMe)
   const isAir = vehicle === 'heli' || vehicle === 'ufo'
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('diagram'), 80)
-    const t2 = setTimeout(() => setPhase('return'), 2200)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [player.id])
+    const timers = [
+      setTimeout(() => setStep('boarded'), 450),
+      setTimeout(() => setStep('arc'), 850),
+      setTimeout(() => setStep('diagram'), 1450),
+      setTimeout(() => setStep('return'), 2850),
+      setTimeout(() => setStep('vanish'), 3650),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [player.id, answerText])
 
-  const atDiagram = phase === 'diagram'
-  const goingBack = phase === 'return'
+  const deskX = fromLeft ? '14%' : '86%'
+  const midArcX = fromLeft ? '31%' : '69%'
+  const diagramX = fromLeft ? 'calc(50% - 175px)' : 'calc(50% + 175px)'
 
-  const posStyle: React.CSSProperties = {
-    left: atDiagram
-      ? fromLeft ? 'calc(50% - 165px)' : 'calc(50% + 165px)'
-      : fromLeft ? '14%' : '86%',
-    bottom: isAir
-      ? atDiagram ? '88px' : '18px'
-      : '14px',
-    opacity: goingBack ? 0.85 : 1,
-    transition: 'all 1.1s cubic-bezier(0.22, 1, 0.36, 1)',
-  }
+  const leftPos =
+    step === 'empty_arrive' || step === 'boarded' || step === 'return' || step === 'vanish'
+      ? deskX
+      : step === 'arc'
+        ? midArcX
+        : diagramX
 
-  const faceRight = (fromLeft && !goingBack) || (!fromLeft && goingBack)
+  const bottomPos =
+    step === 'arc'
+      ? isAir ? '155px' : '42px'
+      : step === 'diagram'
+        ? isAir ? '95px' : '16px'
+        : '28px'
+
+  const tiltDeg =
+    step === 'arc'
+      ? fromLeft ? -14 : 14
+      : step === 'return'
+        ? fromLeft ? 10 : -10
+        : 0
+
+  const faceRight =
+    step === 'return' || step === 'vanish' ? !fromLeft : fromLeft
+
+  const showDriverInside = step !== 'empty_arrive'
 
   return (
     <div
-      style={posStyle}
-      className="pointer-events-none absolute z-30 flex -translate-x-1/2 flex-col items-center"
+      style={{
+        left: leftPos,
+        bottom: bottomPos,
+        opacity: step === 'vanish' ? 0 : 1,
+        transform: `translateX(-50%) rotate(${tiltDeg}deg) scale(${step === 'vanish' ? 0.6 : 1})`,
+        transition: 'all 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)',
+      }}
+      className="pointer-events-none absolute z-30 flex flex-col items-center"
     >
-      {answerText && atDiagram && (
+      {answerText && step === 'diagram' && (
         <div
           className={[
             'mb-1 rounded-xl px-3 py-1 text-xs font-black shadow-lg ring-1 sm:text-sm',
@@ -194,12 +216,18 @@ export function StudioVehicleDrive({
       )}
 
       <div className="relative flex flex-col items-center">
-        {/* Lik sjedi čvrsto u kabini/kokpitu vozila */}
-        <Avatar
-          id={player.avatar}
-          mood={isZero ? 'happy' : 'thinking'}
-          className="relative z-10 -mb-7 h-11 w-11 sm:-mb-8 sm:h-12 sm:w-12"
-        />
+        <div
+          className={[
+            'relative z-10 -mb-7 transition-all duration-300 sm:-mb-8',
+            showDriverInside ? 'scale-100 opacity-100' : '-translate-y-4 scale-50 opacity-0',
+          ].join(' ')}
+        >
+          <Avatar
+            id={player.avatar}
+            mood={isZero ? 'happy' : 'thinking'}
+            className="h-11 w-11 sm:h-12 sm:w-12"
+          />
+        </div>
         <div className={faceRight ? '' : '-scale-x-100'}>
           <VehicleArt type={vehicle} isZero={isZero} />
         </div>
