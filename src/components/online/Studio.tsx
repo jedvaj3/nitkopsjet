@@ -1,236 +1,1033 @@
-import { useEffect, useState } from 'react'
-import { Avatar } from './Avatar'
-import type { PublicPlayer } from '@/online/types'
+import { useEffect, useRef, useState } from 'react'
+import {
+  ArrowRight,
+  ChevronDown,
+  Crown,
+  Gem,
+  Loader2,
+  Send,
+  WifiOff,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { ScoreColumn } from '@/components/game/ScoreColumn'
+import { bodova } from '@/game/engine'
+import {
+  categoryEmoji,
+  categoryName,
+  isAdultCategory,
+  questionById,
+} from '@/game/questions'
+import { REPLACE_SECONDS, ROUND_DUPLICATE_MSG, trioSeconds } from '@/game/trio'
+import { TrioFields } from '@/components/game/TrioFields'
+import { usePanic } from '@/game/usePanic'
+import { fireConfetti } from '@/game/confetti'
+import { sfx } from '@/game/sound'
+import {
+  REACTIONS,
+  type PublicPlayer,
+  type PublicRoom,
+  type PublicTurn,
+  type Reaction,
+} from '@/online/types'
+import { ApiError } from '@/online/client'
+import { Avatar, type AvatarMood } from './Avatar'
+import type { RoomViewProps } from './Lobby'
+import { StudioVehicleDrive, VehiclePickerBar } from './StudioVehicle'
 
-export type VehicleId = 'fico' | 'police' | 'lambo' | 'heli' | 'f1' | 'ufo'
 
-export const VEHICLES: { id: VehicleId; name: string; emoji: string }[] = [
-  { id: 'fico', name: 'Zlatni Fićo', emoji: '🚗' },
-  { id: 'police', name: 'Presretač', emoji: '🚓' },
-  { id: 'lambo', name: 'Lambo', emoji: '🏎️' },
-  { id: 'heli', name: 'Helikopter', emoji: '🚁' },
-  { id: 'f1', name: 'Formula 1', emoji: '🏁' },
-  { id: 'ufo', name: 'NLO', emoji: '🛸' },
-]
+/** The shared TV-studio view for turns, reveals and round summaries. */
+export function Studio({ room, me, act, serverNow }: RoomViewProps) {
+  const round = room.rounds[room.roundIdx]
+  const last = room.lastTurn
+  const current =
+    room.players.find((p) => p.id === room.currentPlayerId) ?? null
+  const myTurn = room.phase === 'turn' && room.currentPlayerId === me
+  const trio = room.settings.format !== 'classic'
+  const seatedMe = !!round?.order.includes(me)
+  const myInput =
+    room.phase === 'input' && seatedMe && !room.locked.includes(me)
+  const myReplace = room.phase === 'replace' && room.replacing?.playerId === me
+  const hasBar = myTurn || myInput || myReplace
 
-const STORAGE_KEY = 'nitkosjet_vehicle'
+  // Column animation bookkeeping: `revealSeq` = latest answer seen in the reveal
+  // phase on this device, `doneSeq` = latest answer whose column has finished.
+  const [revealSeq, setRevealSeq] = useState(0)
+  const [doneSeq, setDoneSeq] = useState(0)
+  if (room.phase === 'reveal' && last && last.seq > revealSeq)
+    setRevealSeq(last.seq)
+  const animating =
+    !!last &&
+    revealSeq === last.seq &&
+    doneSeq < last.seq &&
+    room.phase !== 'summary'
+  const hidden = animating ? last : null
 
-export function getSavedVehicle(): VehicleId {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY) as VehicleId | null
-    return VEHICLES.some((x) => x.id === v) ? v! : 'fico'
-  } catch {
-    return 'fico'
-  }
-}
+  // Ticking clock for the countdown.
+  const [now, setNow] = useState(() => serverNow())
+  useEffect(() => {
+    const id = setInterval(() => setNow(serverNow()), 250)
+    return () => clearInterval(id)
+  }, [serverNow])
+  const secondsLeft =
+    (room.phase === 'turn' ||
+      room.phase === 'input' ||
+      room.phase === 'replace') &&
+    room.deadline
+      ? Math.max(0, Math.ceil((room.deadline - now) / 1000))
+      : null
+  const fullTime =
+    room.phase === 'input'
+      ? trioSeconds(room.settings.timer)
+      : room.phase === 'replace'
+        ? REPLACE_SECONDS
+        : room.settings.timer
 
-export function setSavedVehicle(id: VehicleId) {
-  try {
-    localStorage.setItem(STORAGE_KEY, id)
-  } catch {}
-}
+  // "Your turn" cue and last-seconds beeps on the active player's phone.
+  const alert = myTurn || myReplace
+  useEffect(() => {
+    if (!alert) return
+    sfx.timeWarning()
+    navigator.vibrate?.(150)
+  }, [alert, room.roundIdx, room.turnIdx])
+  // Last 10 seconds: red pulsing studio for everyone, heartbeat for whoever is typing.
+  const { panic, fast } = usePanic(secondsLeft, hasBar)
 
-export function vehicleForPlayer(player: PublicPlayer, isMe: boolean): VehicleId {
-  if (isMe) return getSavedVehicle()
-  const idx = (player.name.length + player.avatar) % VEHICLES.length
-  return VEHICLES[idx].id
-}
+  /** The player's latest revealed answer this round. */
+  const turnOf = (id: string) =>
+    round?.turns.filter((t) => t.playerId === id).at(-1)
+  const totalShown = (p: PublicPlayer) =>
+    p.total - (hidden && hidden.playerId === p.id ? hidden.points : 0)
 
-function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
-  if (type === 'heli') {
-    return (
-      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_18px_rgba(0,0,0,0.85)]">
-        <rect x="16" y="10" width="148" height="4" rx="2" fill="#facc15" className="origin-center animate-pulse" />
-        <rect x="87" y="12" width="6" height="12" fill="#94a3b8" />
-        <path d="M12 46 L62 40 L62 56 L12 52 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
-        <circle cx="12" cy="49" r="9" fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="6 4" />
-        <ellipse cx="96" cy="48" rx="44" ry="24" fill="#0f172a" stroke="#facc15" strokeWidth="2.5" />
-        <path d="M96 26 C122 26 136 36 136 50 L96 50 Z" fill="#38bdf8" fillOpacity="0.45" />
-        <path d="M66 72 L66 82 M122 72 L122 82 M52 82 L138 82" stroke="#cbd5e1" strokeWidth="3.5" strokeLinecap="round" />
-        {isZero && <circle cx="96" cy="48" r="46" fill="none" stroke="#10b981" strokeWidth="3" className="animate-ping" />}
-      </svg>
+  const moodFor = (p: PublicPlayer): AvatarMood => {
+    if (
+      (room.phase === 'turn' || room.phase === 'replace') &&
+      p.id === room.currentPlayerId
     )
+      return 'thinking'
+    if (room.phase === 'input')
+      return room.locked.includes(p.id) ? 'idle' : 'thinking'
+    const t = turnOf(p.id)
+    if (!t) return 'idle'
+    if (hidden && t.seq === hidden.seq) return 'thinking'
+    if (t.answerText === null) return 'sad'
+    if (t.points <= 10) return 'happy'
+    return 'neutral'
   }
 
-  if (type === 'ufo') {
-    return (
-      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_20px_rgba(16,185,129,0.55)]">
-        <polygon points="65,62 115,62 135,92 45,92" fill="#10b981" fillOpacity="0.3" />
-        <ellipse cx="90" cy="36" rx="30" ry="18" fill="#38bdf8" fillOpacity="0.55" stroke="#bae6fd" strokeWidth="2" />
-        <ellipse cx="90" cy="48" rx="68" ry="16" fill="#1e293b" stroke="#10b981" strokeWidth="3" />
-        <circle cx="45" cy="48" r="4" fill="#facc15" />
-        <circle cx="75" cy="52" r="4" fill="#10b981" />
-        <circle cx="105" cy="52" r="4" fill="#10b981" />
-        <circle cx="135" cy="48" r="4" fill="#facc15" />
-      </svg>
+  // Reactions: show each one for ~2.5 s over the target's desk; pop sound for new ones.
+  const flying = room.reactions.filter((r) => now - r.at < 2500)
+  const lastReaction = Math.max(0, ...room.reactions.map((r) => r.id))
+  const heardReaction = useRef(lastReaction)
+  useEffect(() => {
+    if (lastReaction > heardReaction.current) sfx.react()
+    heardReaction.current = lastReaction
+  }, [lastReaction])
+  const canHeckle =
+    !hasBar &&
+    (room.phase === 'turn' ||
+      room.phase === 'reveal' ||
+      room.phase === 'replace') &&
+    !!room.currentPlayerId &&
+    room.currentPlayerId !== me
+
+  const desks = room.players.map((p) => (
+    <Desk
+      key={p.id}
+      reactions={flying.filter((r) => r.to === p.id)}
+      player={p}
+      mood={moodFor(p)}
+      active={p.id === room.currentPlayerId && room.phase !== 'summary'}
+      isMe={p.id === me}
+      isHost={p.id === room.hostId}
+      total={totalShown(p)}
+      turn={turnOf(p.id)}
+      thinking={
+        ((room.phase === 'turn' || room.phase === 'replace') &&
+          p.id === room.currentPlayerId) ||
+        (room.phase === 'input' &&
+          !room.locked.includes(p.id) &&
+          !!round?.order.includes(p.id))
+      }
+      status={
+        room.phase === 'input' && round?.order.includes(p.id)
+          ? room.locked.includes(p.id)
+            ? '🔒 zaključano'
+            : '✍️ piše…'
+          : undefined
+      }
+      chips={
+        trio
+          ? (round?.turns ?? []).filter(
+              (t) => t.playerId === p.id && !(hidden && t.seq === hidden.seq),
+            )
+          : undefined
+      }
+      pending={!!hidden && hidden.playerId === p.id}
+    />
+  ))
+  const half = Math.ceil(desks.length / 2)
+
+  const center =
+    room.phase === 'summary' ? (
+      <RoundRecap
+        room={room}
+        me={me}
+        act={act}
+        serverNow={serverNow}
+        now={now}
+      />
+    ) : (
+      <div className="flex items-end justify-center gap-4">
+        <div className="h-52 sm:h-64 lg:h-72">
+          {animating && last ? (
+            <ScoreColumn
+              key={last.seq}
+              target={last.answerText === null ? 100 : last.points}
+              wrong={last.answerText === null}
+              className="h-full"
+              onDone={() => {
+                setDoneSeq(last.seq)
+                if (last.answerText !== null && last.points === 0)
+                  fireConfetti()
+              }}
+            />
+          ) : (
+            <IdleColumn />
+          )}
+        </div>
+        <StatusPanel
+          className="w-40 sm:w-52"
+          phase={room.phase}
+          current={current}
+          myTurn={myTurn}
+          secondsLeft={secondsLeft}
+          timer={fullTime}
+          trio={trio}
+          lockedCount={room.locked.length}
+          seatedCount={round?.order.length ?? 0}
+          replacing={room.replacing}
+          replacingName={
+            room.players.find((p) => p.id === room.replacing?.playerId)?.name
+          }
+          myReplace={myReplace}
+          last={last}
+          animating={animating}
+          lastName={room.players.find((p) => p.id === last?.playerId)?.name}
+        />
+      </div>
     )
-  }
-
-  const bodyColor =
-    type === 'lambo' ? '#f59e0b' :
-    type === 'police' ? '#1e293b' :
-    type === 'f1' ? '#ef4444' : '#eab308'
 
   return (
-    <svg viewBox="0 0 180 85" className="w-40 sm:w-48 drop-shadow-[0_12px_16px_rgba(0,0,0,0.85)]">
-      {type === 'police' && (
-        <g>
-          <rect x="74" y="14" width="14" height="7" rx="2" fill="#ef4444" className="animate-ping" />
-          <rect x="88" y="14" width="14" height="7" rx="2" fill="#3b82f6" />
-        </g>
+    <div
+      className={cn(
+        hasBar
+          ? myInput
+            ? 'pb-72 sm:pb-48'
+            : 'pb-28'
+          : canHeckle
+            ? 'pb-24'
+            : 'pb-4',
       )}
-      {type === 'f1' ? (
-        <path d="M14 56 L30 36 L44 36 L48 46 L112 42 L156 52 L166 60 L14 60 Z" fill={bodyColor} stroke="#fff" strokeWidth="1.5" />
-      ) : type === 'lambo' ? (
-        <path d="M18 58 L38 34 L98 32 L154 48 L164 58 Z" fill={bodyColor} stroke="#fef08a" strokeWidth="2" />
-      ) : (
-        <path d="M24 58 L36 30 L114 30 L138 44 L156 50 L156 60 L24 60 Z" fill={bodyColor} stroke="#fef08a" strokeWidth="2" />
+    >
+      {/* Round meta + question */}
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <span className="rounded-full bg-white/5 px-3 py-1 font-semibold ring-1 ring-white/10">
+          {round && (
+            <>
+              {isAdultCategory(round.question.category) ? (
+                <span className="mr-1 rounded bg-rose-500 px-1 text-[10px] font-black text-white">
+                  18+
+                </span>
+              ) : (
+                categoryEmoji(round.question.category) + ' '
+              )}
+              {categoryName(round.question.category)}
+            </>
+          )}
+        </span>
+        <span className="font-display text-xs tracking-widest text-muted-foreground uppercase">
+          Runda {room.roundIdx + 1}/{room.totalRounds} · soba {room.code}
+        </span>
+      </div>
+      {round && (
+        <div className="panel rounded-3xl px-5 py-4 text-center sm:px-8 sm:py-5">
+          <h2 className="font-display text-lg leading-tight font-bold text-balance sm:text-2xl">
+            {round.question.text}
+          </h2>
+          {round.question.hint && (
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+              {round.question.hint}
+            </p>
+          )}
+        </div>
       )}
-      <polygon points="84,33 110,33 128,46 84,46" fill="#38bdf8" fillOpacity="0.65" />
-      <circle cx="48" cy="62" r="14" fill="#09090b" stroke="#94a3b8" strokeWidth="3" />
-      <circle cx="48" cy="62" r="5" fill="#facc15" />
-      <circle cx="132" cy="62" r="14" fill="#09090b" stroke="#94a3b8" strokeWidth="3" />
-      <circle cx="132" cy="62" r="5" fill="#facc15" />
-    </svg>
+
+            {/* Studio */}
+      <div
+        className={cn(
+          'studio-floor relative mt-4 overflow-hidden rounded-3xl px-3 pt-4 pb-5 ring-1 ring-white/10 sm:px-5',
+          panic && 'panic-glow',
+          fast && 'panic-glow-fast',
+        )}
+      >
+        {animating && last && (() => {
+          const idx = room.players.findIndex((p) => p.id === last.playerId)
+          const driver = room.players[idx]
+          if (!driver) return null
+          return (
+            <StudioVehicleDrive
+              key={last.seq}
+              player={driver}
+              fromLeft={idx < half}
+              isMe={driver.id === me}
+              isZero={last.answerText !== null && last.points === 0}
+              answerText={last.answerText}
+            />
+          )
+        })()}
+        <div className="lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-end lg:gap-6">
+          <div className="hidden grid-cols-2 gap-x-3 gap-y-2 lg:grid">
+            {desks.slice(0, half)}
+          </div>
+          <div className="lg:min-w-[22rem]">{center}</div>
+          <div className="hidden grid-cols-2 gap-x-3 gap-y-2 lg:grid">
+            {desks.slice(half)}
+          </div>
+          <VehiclePickerBar />
+
+        </div>
+
+        <div
+          className={cn(
+            'mt-5 grid gap-x-2 gap-y-2 lg:hidden',
+            desks.length <= 3
+              ? 'grid-cols-3'
+              : desks.length === 4
+                ? 'grid-cols-4'
+                : 'grid-cols-4',
+          )}
+        >
+          {desks}
+        </div>
+      </div>
+
+      {canHeckle && <ReactionBar act={act} targetName={current?.name ?? ''} />}
+      {myTurn && (
+        <AnswerBar
+          key={`${room.game}-${room.roundIdx}-${room.turnIdx}`}
+          act={act}
+          secondsLeft={secondsLeft}
+          panic={panic}
+        />
+      )}
+      {myInput && round && (
+        <TrioFields
+          key={`${room.game}-${room.roundIdx}`}
+          docked
+          panic={panic}
+          question={questionById(round.question.id)}
+          secondsLeft={secondsLeft}
+          onLock={async (inputs) => {
+            try {
+              sfx.click()
+              await act('lock', { inputs })
+              return null
+            } catch (e) {
+              return e instanceof Error
+                ? e.message
+                : 'Zaključavanje nije uspjelo.'
+            }
+          }}
+        />
+      )}
+      {myReplace && room.replacing && (
+        <AnswerBar
+          key={`r-${room.seq}`}
+          act={act}
+          action="replace"
+          secondsLeft={secondsLeft}
+          panic={panic}
+          warning={`${ROUND_DUPLICATE_MSG} („${room.replacing.duplicate}”)`}
+        />
+      )}
+    </div>
   )
 }
 
-export function VehiclePickerBar() {
-  const [selected, setSelected] = useState<VehicleId>(() => getSavedVehicle())
-
-  const choose = (id: VehicleId) => {
-    setSelected(id)
-    setSavedVehicle(id)
-  }
-
+function IdleColumn() {
   return (
-    <div className="mt-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-300">
-        Odaberi svoje vozilo za studio
-      </p>
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-        {VEHICLES.map((v) => {
-          const active = selected === v.id
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => choose(v.id)}
-              className={[
-                'flex flex-col items-center justify-center rounded-xl px-2 py-2 text-xs font-bold transition',
-                active
-                  ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-200'
-                  : 'bg-slate-900/80 text-white/80 hover:bg-slate-800',
-              ].join(' ')}
-            >
-              <span className="text-lg">{v.emoji}</span>
-              <span className="mt-0.5 truncate">{v.name}</span>
-            </button>
-          )
-        })}
+    <div className="flex h-full items-stretch gap-3">
+      <div className="flex flex-col justify-between py-1 text-[10px] font-semibold text-muted-foreground/70 tabular-nums sm:text-xs">
+        {[100, 75, 50, 25, 0].map((n) => (
+          <span key={n}>{n}</span>
+        ))}
+      </div>
+      <div className="column-track relative w-20 overflow-hidden rounded-2xl sm:w-24">
+        <div className="column-fill absolute inset-x-0 bottom-0 h-full rounded-t-md opacity-60" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="font-display text-5xl font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+            ?
+          </span>
+        </div>
       </div>
     </div>
   )
 }
 
-export function StudioVehicleDrive({
-  player,
-  fromLeft,
-  isMe,
-  isZero,
-  answerText,
+function StatusPanel({
+  className,
+  phase,
+  current,
+  myTurn,
+  secondsLeft,
+  timer,
+  trio,
+  lockedCount,
+  seatedCount,
+  replacing,
+  replacingName,
+  myReplace,
+  last,
+  animating,
+  lastName,
 }: {
-  player: PublicPlayer
-  fromLeft: boolean
-  isMe: boolean
-  isZero: boolean
-  answerText: string | null
+  className?: string
+  phase: string
+  current: PublicPlayer | null
+  myTurn: boolean
+  secondsLeft: number | null
+  timer: number
+  trio: boolean
+  lockedCount: number
+  seatedCount: number
+  replacing: PublicRoom['replacing']
+  replacingName?: string
+  myReplace: boolean
+  last: PublicTurn | null
+  animating: boolean
+  lastName?: string
 }) {
-  const [step, setStep] = useState<'empty_arrive' | 'boarded' | 'arc' | 'diagram' | 'return' | 'vanish'>('empty_arrive')
-  const vehicle = vehicleForPlayer(player, isMe)
-  const isAir = vehicle === 'heli' || vehicle === 'ufo'
+  const countdown = secondsLeft !== null && (
+    <div className="mt-3">
+      <div className="h-2 overflow-hidden rounded-full bg-white/10">
+        <div
+          className={cn(
+            'h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none',
+            secondsLeft <= 5 ? 'bg-rose-500' : 'bg-cyan-400',
+          )}
+          style={{
+            width: `${Math.min(100, (secondsLeft / Math.max(1, timer)) * 100)}%`,
+          }}
+        />
+      </div>
+      <p
+        className={cn(
+          'mt-1 font-display text-2xl font-black tabular-nums',
+          secondsLeft <= 5 && 'text-rose-400',
+        )}
+      >
+        {secondsLeft} s
+      </p>
+    </div>
+  )
+  if (phase === 'input')
+    return (
+      <div className={cn('pb-2', className)} aria-live="polite">
+        <p className="font-display text-base font-black text-gold">
+          Svi upisuju 3 odgovora
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Zaključano:{' '}
+          <b className="text-foreground">
+            {lockedCount}/{seatedCount}
+          </b>
+          . Otkrivanje kreće kad svi zaključaju.
+        </p>
+        {countdown}
+      </div>
+    )
+  if (phase === 'replace' && replacing && !animating)
+    return (
+      <div className={cn('pb-2', className)} aria-live="polite">
+        <p className="text-sm font-bold text-amber-300">
+          ⚖️ {ROUND_DUPLICATE_MSG.split('!')[0]}!
+        </p>
+        <p className="mt-1 text-sm">
+          „{replacing.input}” = <b>{replacing.duplicate}</b>. Bez kazne —{' '}
+          {myReplace ? (
+            <b className="text-gold">upiši novi odgovor.</b>
+          ) : (
+            <>{replacingName} upisuje zamjenu…</>
+          )}
+        </p>
+        {countdown}
+      </div>
+    )
+  if (phase === 'reveal' || animating) {
+    if (!last) return null
+    const correct = last.answerText !== null
+    return (
+      <div className={cn('pb-2', className)} aria-live="polite">
+        <p className="text-xs text-muted-foreground">
+          {lastName}
+          {trio && last.slot !== undefined
+            ? ` · ${last.slot + 1}. odgovor`
+            : ' odgovara'}
+          :
+        </p>
+        <p className="text-lg leading-tight font-bold break-words">
+          {last.timedOut
+            ? '⏱️ Isteklo vrijeme'
+            : last.input
+              ? `„${last.input}”`
+              : '— prazno polje —'}
+        </p>
+        {animating ? (
+          <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin motion-reduce:animate-none" />{' '}
+            Stupac se spušta…
+          </p>
+        ) : correct ? (
+          <div className="animate-pop mt-2">
+            <p
+              className={cn(
+                'font-display text-sm font-black uppercase',
+                last.points === 0 ? 'text-gold' : 'text-neon',
+              )}
+            >
+              {last.points === 0
+                ? 'NitkoSjet! 🏆'
+                : last.novel
+                  ? 'Priznato!'
+                  : 'Točno!'}
+            </p>
+            <p className="text-sm">
+              {last.answerText} — <b>{last.points}</b> {bodova(last.points)}
+            </p>
+          </div>
+        ) : (
+          <p className="animate-pop mt-2 font-display text-sm font-black text-rose-400 uppercase">
+            {last.timedOut
+              ? 'Prekasno! +100'
+              : last.input
+                ? 'Netočno! +100'
+                : 'Prazno! +100'}
+          </p>
+        )}
+        {!animating && last.judge && last.judge !== 'baza' && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            <span className="font-semibold text-neon">
+              {last.judge === 'ai' ? '⚖️ AI sudac' : '⚖️ Ključne riječi'}
+              {last.novel ? ' · nije u anketi, ali priznato' : ''}
+            </span>
+            {last.reason && <> · {last.reason}</>}
+          </p>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div className={cn('pb-2', className)} aria-live="polite">
+      {myTurn ? (
+        <p className="font-display text-xl font-black text-gold">
+          Ti si na redu!
+        </p>
+      ) : (
+        <p className="text-base">
+          Na redu je <b className="text-neon">{current?.name ?? '…'}</b>
+          <span className="animate-pulse motion-reduce:animate-none">…</span>
+        </p>
+      )}
+      {countdown}
+      {!myTurn && (
+        <p className="mt-1 text-xs text-muted-foreground">
+          Prati stupac — svi vide isto.
+        </p>
+      )}
+    </div>
+  )
+}
 
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setStep('boarded'), 450),
-      setTimeout(() => setStep('arc'), 850),
-      setTimeout(() => setStep('diagram'), 1450),
-      setTimeout(() => setStep('return'), 2850),
-      setTimeout(() => setStep('vanish'), 3650),
-    ]
-    return () => timers.forEach(clearTimeout)
-  }, [player.id, answerText])
+function Desk({
+  player,
+  mood,
+  active,
+  isMe,
+  isHost,
+  total,
+  turn,
+  thinking,
+  status,
+  chips,
+  pending,
+  reactions = [],
+}: {
+  reactions?: Reaction[]
+  player: PublicPlayer
+  mood: AvatarMood
+  active: boolean
+  isMe: boolean
+  isHost: boolean
+  total: number
+  turn?: PublicTurn
+  thinking: boolean
+  /** Short status in the bubble (e.g. while writing answers). */
+  status?: string
+  /** Trio: answers revealed so far this round, shown under the desk. */
+  chips?: PublicTurn[]
+  pending: boolean
+}) {
+  const bubble = status
+    ? status
+    : thinking
+      ? '…'
+      : turn
+        ? turn.timedOut
+          ? '⏱️'
+          : turn.input
+        : null
+  const showPoints = turn && !pending
+  return (
+    <div className="relative flex min-w-0 flex-col items-center">
+      {reactions.map((r) => (
+        <span
+          key={r.id}
+          aria-hidden
+          className="reaction-fly pointer-events-none absolute top-10 left-1/2 z-30 text-3xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-4xl"
+          style={
+            {
+              '--dx': `${((r.id * 37) % 60) - 30}px`,
+              '--rot': `${((r.id * 53) % 40) - 20}deg`,
+            } as React.CSSProperties
+          }
+        >
+          {r.emoji}
+        </span>
+      ))}
+      <div className="flex h-12 w-full items-end justify-center">
+        {bubble && (
+          <div
+            className={cn(
+              'bubble animate-pop mb-1 max-w-full rounded-xl px-2 py-1 text-center text-[11px] leading-tight font-bold shadow-lg sm:text-xs',
+              thinking
+                ? 'bg-white/90 text-[#1a1330]'
+                : showPoints && turn.answerText === null
+                  ? 'bg-rose-500 text-white'
+                  : showPoints && turn.points === 0
+                    ? 'bg-amber-300 text-[#1a1000]'
+                    : 'bg-white text-[#1a1330]',
+            )}
+          >
+            <span className="line-clamp-2 break-words">
+              {thinking && !status ? (
+                <span className="animate-pulse">💭 …</span>
+              ) : (
+                bubble
+              )}
+            </span>
+            {showPoints && !status && (
+              <span className="block font-display text-[10px] font-black">
+                {turn.points}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+      {active && (
+        <div
+          className="desk-spot pointer-events-none absolute inset-x-0 top-6 bottom-6"
+          aria-hidden
+        />
+      )}
+      <Avatar
+        id={player.avatar}
+        mood={mood}
+        title={player.name}
+        className={cn(
+          'relative z-0 -mb-3 h-16 w-16 transition-opacity motion-reduce:transition-none sm:h-20 sm:w-20',
+          !player.online && 'opacity-50',
+        )}
+      />
+      <div
+        className={cn(
+          'desk relative z-10 w-full rounded-xl px-1.5 py-1 text-center',
+          active && 'desk-active',
+          isMe && !active && 'ring-1 ring-cyan-400/60',
+        )}
+      >
+        <p className="flex items-center justify-center gap-0.5 text-[11px] font-bold sm:text-xs">
+          {isHost && (
+            <Crown className="size-3 shrink-0 text-gold" aria-label="Domaćin" />
+          )}
+          <span className="truncate">
+            {isMe ? `${player.name} (ti)` : player.name}
+          </span>
+          {!player.online && (
+            <WifiOff
+              className="size-3 shrink-0 text-muted-foreground"
+              aria-label="Nije spojen"
+            />
+          )}
+        </p>
+        <p
+          className={cn(
+            'font-display text-lg leading-none font-black tabular-nums sm:text-xl',
+            active ? 'text-gold' : 'text-neon',
+          )}
+        >
+          {total}
+        </p>
+      </div>
+      {chips && chips.length > 0 && (
+        <ul
+          className="mt-1 w-full space-y-0.5"
+          aria-label={`Otkriveni odgovori: ${player.name}`}
+        >
+          {chips.map((t) => (
+            <li
+              key={t.seq}
+              className={cn(
+                'flex items-center justify-between gap-1 rounded-md bg-black/40 px-1.5 py-0.5 text-[10px] ring-1 ring-white/5',
+                t.answerText === null && 'text-rose-300',
+              )}
+            >
+              <span className="truncate">
+                {t.answerText ?? (t.input || 'prazno')}
+              </span>
+              <b className="tabular-nums">{t.points}</b>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
-  const deskX = fromLeft ? '14%' : '86%'
-  const midArcX = fromLeft ? '31%' : '69%'
-  const diagramX = fromLeft ? 'calc(50% - 175px)' : 'calc(50% + 175px)'
+const REACTION_LABELS: Record<string, string> = {
+  '😂': 'Smijeh',
+  '🔥': 'Vatra',
+  '💀': 'Propao si',
+  '🤡': 'Klaun',
+  '🤫': 'Pst!',
+}
 
-  const leftPos =
-    step === 'empty_arrive' || step === 'boarded' || step === 'return' || step === 'vanish'
-      ? deskX
-      : step === 'arc'
-        ? midArcX
-        : diagramX
+/** Quick heckling buttons for everyone who isn't on turn. */
+function ReactionBar({
+  act,
+  targetName,
+}: {
+  act: RoomViewProps['act']
+  targetName: string
+}) {
+  const [cooldown, setCooldown] = useState(false)
+  const send = async (emoji: string) => {
+    if (cooldown) return
+    setCooldown(true)
+    setTimeout(() => setCooldown(false), 650)
+    sfx.react()
+    try {
+      await act('react', { emoji })
+    } catch {
+      /* rate-limited or the turn just ended — ignore */
+    }
+  }
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#0b0920]/90 px-4 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] backdrop-blur">
+      <p className="mb-1 text-center text-[11px] text-muted-foreground">
+        Podbodi igrača <b className="text-foreground">{targetName}</b>
+      </p>
+      <div
+        className="mx-auto flex max-w-md justify-between gap-2"
+        role="group"
+        aria-label="Reakcije"
+      >
+        {REACTIONS.map((e) => (
+          <button
+            key={e}
+            onClick={() => send(e)}
+            aria-label={REACTION_LABELS[e]}
+            title={REACTION_LABELS[e]}
+            className={cn(
+              'flex h-12 flex-1 items-center justify-center rounded-2xl bg-white/5 text-2xl ring-1 ring-white/10 transition active:scale-90 motion-reduce:transition-none',
+              cooldown ? 'opacity-50' : 'hover:bg-white/10',
+            )}
+          >
+            {e}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-  const bottomPos =
-    step === 'arc'
-      ? isAir ? '155px' : '42px'
-      : step === 'diagram'
-        ? isAir ? '95px' : '16px'
-        : '28px'
+function AnswerBar({
+  act,
+  secondsLeft,
+  action = 'answer',
+  warning,
+  panic,
+}: {
+  panic?: boolean
+  act: RoomViewProps['act']
+  secondsLeft: number | null
+  action?: 'answer' | 'replace'
+  /** Shown above the field (duplicate replacement). */
+  warning?: string
+}) {
+  const [value, setValue] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const tiltDeg =
-    step === 'arc'
-      ? fromLeft ? -14 : 14
-      : step === 'return'
-        ? fromLeft ? 10 : -10
-        : 0
-
-  const faceRight =
-    step === 'return' || step === 'vanish' ? !fromLeft : fromLeft
-
-  const showDriverInside = step !== 'empty_arrive'
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!value.trim()) {
+      setError('Upiši odgovor.')
+      return
+    }
+    setBusy(true)
+    setError(null)
+    try {
+      sfx.click()
+      await act(action, { input: value })
+    } catch (err) {
+      setError(
+        err instanceof ApiError || err instanceof Error
+          ? err.message
+          : 'Slanje nije uspjelo.',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
 
   return (
-    <div
-      style={{
-        left: leftPos,
-        bottom: bottomPos,
-        opacity: step === 'vanish' ? 0 : 1,
-        transform: `translateX(-50%) rotate(${tiltDeg}deg) scale(${step === 'vanish' ? 0.6 : 1})`,
-        transition: 'all 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)',
-      }}
-      className="pointer-events-none absolute z-30 flex flex-col items-center"
+    <form
+      onSubmit={submit}
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-amber-300/30 bg-[#0b0920]/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur"
     >
-      {answerText && step === 'diagram' && (
-        <div
-          className={[
-            'mb-1 rounded-xl px-3 py-1 text-xs font-black shadow-lg ring-1 sm:text-sm',
-            isZero
-              ? 'bg-emerald-500 text-slate-950 ring-emerald-200 animate-bounce'
-              : 'bg-slate-900/95 text-amber-300 ring-amber-400/50',
-          ].join(' ')}
-        >
-          {player.name}: “{answerText}”
-        </div>
-      )}
-
-      <div className="relative flex flex-col items-center">
-        <div
-          className={[
-            'relative z-10 -mb-7 transition-all duration-300 sm:-mb-8',
-            showDriverInside ? 'scale-100 opacity-100' : '-translate-y-4 scale-50 opacity-0',
-          ].join(' ')}
-        >
-          <Avatar
-            id={player.avatar}
-            mood={isZero ? 'happy' : 'thinking'}
-            className="h-11 w-11 sm:h-12 sm:w-12"
+      <div className="mx-auto max-w-2xl">
+        {warning && (
+          <p
+            role="alert"
+            className="mb-2 rounded-lg bg-amber-300/15 px-3 py-2 text-sm font-semibold text-amber-200 ring-1 ring-amber-300/40"
+          >
+            {warning}
+          </p>
+        )}
+        <div className="flex gap-2">
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            autoFocus
+            maxLength={80}
+            autoComplete="off"
+            enterKeyHint="send"
+            placeholder={
+              action === 'replace' ? 'Zamjenski odgovor…' : 'Tvoj odgovor…'
+            }
+            aria-label="Tvoj odgovor"
+            className={cn(
+              'h-12 min-w-0 flex-1 rounded-xl border bg-black/40 px-3 text-lg font-semibold focus:ring-2 focus:outline-none',
+              panic
+                ? 'panic-shake border-rose-400 focus:ring-rose-400/50'
+                : 'border-amber-300/40 focus:border-amber-300 focus:ring-amber-300/40',
+            )}
           />
+          <button
+            disabled={busy}
+            className="btn-gold inline-flex h-12 items-center gap-2 rounded-xl px-4 font-bold disabled:opacity-60"
+          >
+            {busy ? (
+              <Loader2 className="size-5 animate-spin motion-reduce:animate-none" />
+            ) : (
+              <Send className="size-5" />
+            )}
+            <span className="hidden sm:inline">Pošalji</span>
+          </button>
         </div>
-        <div className={faceRight ? '' : '-scale-x-100'}>
-          <VehicleArt type={vehicle} isZero={isZero} />
+        <p
+          className={cn(
+            'mt-1 text-xs',
+            error ? 'font-semibold text-rose-400' : 'text-muted-foreground',
+          )}
+          role={error ? 'alert' : undefined}
+        >
+          {error ??
+            (busy
+              ? '⚖️ Sudac provjerava smisao odgovora…'
+              : `Ti si na redu${secondsLeft !== null ? ` — još ${secondsLeft} s` : ''}. Isti odgovor ne vrijedi dvaput u rundi.`)}
+        </p>
+      </div>
+    </form>
+  )
+}
+
+function RoundRecap({ room, me, act, now }: RoomViewProps & { now: number }) {
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const round = room.rounds[room.roundIdx]
+  const isHost = room.hostId === me
+  const isLast = room.roundIdx + 1 >= room.totalRounds
+  const answers = round.answers ?? []
+  const gems = answers.filter((a) => a.points <= 5).slice(0, 8)
+  const given = new Set(round.turns.map((t) => t.answerText).filter(Boolean))
+  const nameOf = (id: string) =>
+    room.players.find((p) => p.id === id)?.name ?? 'Igrač'
+  // One row per player: their answers this round and the round total.
+  const byPlayer = [...new Set(round.turns.map((t) => t.playerId))]
+    .map((id) => {
+      const turns = round.turns.filter((t) => t.playerId === id)
+      return { id, turns, sum: turns.reduce((s, t) => s + t.points, 0) }
+    })
+    .sort((a, b) => a.sum - b.sum)
+  const auto = room.phaseUntil
+    ? Math.max(0, Math.ceil((room.phaseUntil - now) / 1000))
+    : null
+
+  useEffect(() => {
+    sfx.fanfare()
+  }, [])
+
+  return (
+    <div className="mx-auto w-full max-w-xl">
+      <h3 className="text-center font-display text-sm font-bold tracking-wider text-muted-foreground uppercase">
+        Kraj runde {room.roundIdx + 1}
+      </h3>
+      <ol className="mt-3 space-y-1.5">
+        {byPlayer.map((row, i) => (
+          <li
+            key={row.id}
+            className={cn(
+              'rounded-xl bg-black/30 px-3 py-2 ring-1 ring-white/5',
+              i === 0 && 'gold-ring',
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <span className="min-w-0 flex-1 truncate text-sm font-bold">
+                {nameOf(row.id)}
+              </span>
+              <span className="font-display text-lg font-black text-neon tabular-nums">
+                {row.sum}
+              </span>
+            </div>
+            <ul className="mt-1 flex flex-wrap gap-1">
+              {row.turns.map((t) => (
+                <li
+                  key={t.seq}
+                  className={cn(
+                    'rounded-full px-2 py-0.5 text-xs ring-1',
+                    t.answerText === null
+                      ? 'bg-rose-500/10 text-rose-300 ring-rose-500/30'
+                      : t.points === 0
+                        ? 'bg-amber-300/15 text-amber-200 ring-amber-300/40'
+                        : 'bg-white/5 ring-white/10',
+                  )}
+                >
+                  {t.answerText ??
+                    (t.timedOut
+                      ? 'isteklo vrijeme'
+                      : t.input
+                        ? `„${t.input}” ✗`
+                        : 'prazno')}{' '}
+                  · <b className="tabular-nums">{t.points}</b>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+
+              <div className="mt-4 rounded-2xl bg-black/30 p-4 ring-1 ring-white/5">
+          <p className="mb-2 flex items-center gap-2 font-display text-xs font-bold tracking-wider text-gold uppercase">
+            <Gem className="size-4" /> Najrjeđi odgovori (ispod 50 skriveni)
+          </p>
+          <ul className="flex flex-wrap gap-1.5">
+            {gems.map((g) => {
+              const hide = g.points < 50 && !given.has(g.text)
+              return (
+                <li
+                  key={g.text}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-xs font-semibold ring-1',
+                    g.points === 0
+                      ? 'bg-amber-300/15 text-amber-200 ring-amber-300/40'
+                      : 'bg-white/5 ring-white/10',
+                    hide && 'text-muted-foreground italic',
+                  )}
+                >
+                  {hide ? '🔒 ???' : g.text} · <b>{g.points}</b>
+                </li>
+              )
+            })}
+          </ul>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            className="mt-3 flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
+          >
+            {open ? 'Sakrij' : 'Prikaži'} sve točne odgovore ({answers.length})
+            <ChevronDown
+              className={cn(
+                'size-4 transition-transform motion-reduce:transition-none',
+                open && 'rotate-180',
+              )}
+            />
+          </button>
+          {open && (
+            <ul className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+              {answers.map((a) => {
+                const hide = a.points < 50 && !given.has(a.text)
+                return (
+                  <li
+                    key={a.text}
+                    className={cn(
+                      'flex justify-between gap-2 rounded-lg bg-white/5 px-2 py-1',
+                      given.has(a.text) && 'text-gold',
+                      hide && 'text-muted-foreground italic',
+                    )}
+                  >
+                    <span className="truncate">
+                      {hide ? '🔒 ??? (tajni odgovor)' : a.text}
+                    </span>
+                    <b className="tabular-nums">{a.points}</b>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </div>
+
+
+      <div className="mt-4 text-center">
+        {isHost ? (
+          <button
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true)
+              sfx.click()
+              try {
+                await act('next')
+              } catch {
+                /* the poll will catch up */
+              } finally {
+                setBusy(false)
+              }
+            }}
+            className="btn-gold inline-flex h-12 items-center gap-2 rounded-2xl px-7 font-bold disabled:opacity-60"
+          >
+            {isLast ? 'Konačni rezultat' : 'Sljedeća runda'}{' '}
+            <ArrowRight className="size-5" />
+          </button>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Domaćin pokreće {isLast ? 'konačni rezultat' : 'sljedeću rundu'}…
+          </p>
+        )}
+        {auto !== null && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Automatski za {auto} s
+          </p>
+        )}
       </div>
     </div>
   )
