@@ -30,5 +30,5 @@ export const EXTRA_QUESTIONS = [
   ...sveOstaleSerije,
   ...dopuna5,
   ...dc,
-  ...from4,
+  //...from4,
 ]
