@@ -32,6 +32,7 @@ import {
 import { ApiError } from '@/online/client'
 import { Avatar, type AvatarMood } from './Avatar'
 import type { RoomViewProps } from './Lobby'
+import { StudioVehicleDrive } from './StudioVehicle'
 
 /** The shared TV-studio view for turns, reveals and round summaries. */
 export function Studio({ room, me, act, serverNow }: RoomViewProps) {
@@ -260,7 +261,7 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
         </div>
       )}
 
-      {/* Studio */}
+            {/* Studio */}
       <div
         className={cn(
           'studio-floor relative mt-4 overflow-hidden rounded-3xl px-3 pt-4 pb-5 ring-1 ring-white/10 sm:px-5',
@@ -268,6 +269,21 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
           fast && 'panic-glow-fast',
         )}
       >
+        {animating && last && (() => {
+          const idx = room.players.findIndex((p) => p.id === last.playerId)
+          const driver = room.players[idx]
+          if (!driver) return null
+          return (
+            <StudioVehicleDrive
+              key={last.seq}
+              player={driver}
+              fromLeft={idx < half}
+              isMe={driver.id === me}
+              isZero={last.answerText !== null && last.points === 0}
+              answerText={last.answerText}
+            />
+          )
+        })()}
         <div className="lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-end lg:gap-6">
           <div className="hidden grid-cols-2 gap-x-3 gap-y-2 lg:grid">
             {desks.slice(0, half)}
@@ -277,6 +293,7 @@ export function Studio({ room, me, act, serverNow }: RoomViewProps) {
             {desks.slice(half)}
           </div>
         </div>
+
         <div
           className={cn(
             'mt-5 grid gap-x-2 gap-y-2 lg:hidden',
