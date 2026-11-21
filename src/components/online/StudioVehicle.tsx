@@ -39,7 +39,7 @@ export function vehicleForPlayer(player: PublicPlayer, isMe: boolean): VehicleId
 function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
   if (type === 'heli') {
     return (
-      <svg viewBox="0 0 180 95" className="w-36 sm:w-44 drop-shadow-[0_14px_18px_rgba(0,0,0,0.85)]">
+      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_18px_rgba(0,0,0,0.85)]">
         <rect x="16" y="10" width="148" height="4" rx="2" fill="#facc15" className="origin-center animate-pulse" />
         <rect x="87" y="12" width="6" height="12" fill="#94a3b8" />
         <path d="M12 46 L62 40 L62 56 L12 52 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
@@ -54,7 +54,7 @@ function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
 
   if (type === 'ufo') {
     return (
-      <svg viewBox="0 0 180 95" className="w-36 sm:w-44 drop-shadow-[0_14px_20px_rgba(16,185,129,0.55)]">
+      <svg viewBox="0 0 180 95" className="w-40 sm:w-48 drop-shadow-[0_14px_20px_rgba(16,185,129,0.55)]">
         <polygon points="65,62 115,62 135,92 45,92" fill="#10b981" fillOpacity="0.3" />
         <ellipse cx="90" cy="36" rx="30" ry="18" fill="#38bdf8" fillOpacity="0.55" stroke="#bae6fd" strokeWidth="2" />
         <ellipse cx="90" cy="48" rx="68" ry="16" fill="#1e293b" stroke="#10b981" strokeWidth="3" />
@@ -72,7 +72,7 @@ function VehicleArt({ type, isZero }: { type: VehicleId; isZero: boolean }) {
     type === 'f1' ? '#ef4444' : '#eab308'
 
   return (
-    <svg viewBox="0 0 180 85" className="w-36 sm:w-44 drop-shadow-[0_12px_16px_rgba(0,0,0,0.85)]">
+    <svg viewBox="0 0 180 85" className="w-40 sm:w-48 drop-shadow-[0_12px_16px_rgba(0,0,0,0.85)]">
       {type === 'police' && (
         <g>
           <rect x="74" y="14" width="14" height="7" rx="2" fill="#ef4444" className="animate-ping" />
@@ -146,42 +146,44 @@ export function StudioVehicleDrive({
   isZero: boolean
   answerText: string | null
 }) {
-  const [phase, setPhase] = useState<'enter' | 'parked' | 'exit'>('enter')
+  const [phase, setPhase] = useState<'desk' | 'diagram' | 'return'>('desk')
   const vehicle = vehicleForPlayer(player, isMe)
   const isAir = vehicle === 'heli' || vehicle === 'ufo'
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('parked'), 150)
-    const t2 = setTimeout(() => setPhase('exit'), 3800)
+    const t1 = setTimeout(() => setPhase('diagram'), 80)
+    const t2 = setTimeout(() => setPhase('return'), 2200)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
     }
   }, [player.id])
 
-  const posStyle: React.CSSProperties =
-    phase === 'parked'
-      ? {
-          left: fromLeft ? 'calc(50% - 175px)' : 'calc(50% + 175px)',
-          opacity: 1,
-        }
-      : {
-          left: fromLeft ? '-220px' : 'calc(100% + 220px)',
-          opacity: 0,
-        }
+  const atDiagram = phase === 'diagram'
+  const goingBack = phase === 'return'
+
+  const posStyle: React.CSSProperties = {
+    left: atDiagram
+      ? fromLeft ? 'calc(50% - 165px)' : 'calc(50% + 165px)'
+      : fromLeft ? '14%' : '86%',
+    bottom: isAir
+      ? atDiagram ? '88px' : '18px'
+      : '14px',
+    opacity: goingBack ? 0.85 : 1,
+    transition: 'all 1.1s cubic-bezier(0.22, 1, 0.36, 1)',
+  }
+
+  const faceRight = (fromLeft && !goingBack) || (!fromLeft && goingBack)
 
   return (
     <div
       style={posStyle}
-      className={[
-        'pointer-events-none absolute z-30 flex -translate-x-1/2 flex-col items-center transition-all duration-[1300ms] ease-in-out',
-        isAir ? 'bottom-16 sm:bottom-24' : 'bottom-3',
-      ].join(' ')}
+      className="pointer-events-none absolute z-30 flex -translate-x-1/2 flex-col items-center"
     >
-      {answerText && phase === 'parked' && (
+      {answerText && atDiagram && (
         <div
           className={[
-            'mb-1.5 rounded-xl px-3 py-1 text-xs font-black shadow-lg ring-1 sm:text-sm',
+            'mb-1 rounded-xl px-3 py-1 text-xs font-black shadow-lg ring-1 sm:text-sm',
             isZero
               ? 'bg-emerald-500 text-slate-950 ring-emerald-200 animate-bounce'
               : 'bg-slate-900/95 text-amber-300 ring-amber-400/50',
@@ -191,28 +193,15 @@ export function StudioVehicleDrive({
         </div>
       )}
 
-      {/* Blago vibriranje motora / lebdenje helikoptera dok stoji */}
-      <div className={isAir ? 'animate-bounce' : 'animate-pulse'}>
-        <div className="relative flex items-end justify-center">
-          <Avatar
-            id={player.avatar}
-            mood={isZero ? 'happy' : 'thinking'}
-            className="absolute -top-6 left-1/2 z-10 h-12 w-12 -translate-x-1/2 sm:-top-7 sm:h-14 sm:w-14"
-          />
-          <div className={fromLeft ? '' : '-scale-x-100'}>
-            <VehicleArt type={vehicle} isZero={isZero} />
-          </div>
-          {/* Dim iz auspuha za aute */}
-          {!isAir && phase === 'parked' && (
-            <span
-              className={[
-                'absolute bottom-2 text-base opacity-75 animate-ping',
-                fromLeft ? '-left-4' : '-right-4',
-              ].join(' ')}
-            >
-              💨
-            </span>
-          )}
+      <div className="relative flex flex-col items-center">
+        {/* Lik sjedi čvrsto u kabini/kokpitu vozila */}
+        <Avatar
+          id={player.avatar}
+          mood={isZero ? 'happy' : 'thinking'}
+          className="relative z-10 -mb-7 h-11 w-11 sm:-mb-8 sm:h-12 sm:w-12"
+        />
+        <div className={faceRight ? '' : '-scale-x-100'}>
+          <VehicleArt type={vehicle} isZero={isZero} />
         </div>
       </div>
     </div>
